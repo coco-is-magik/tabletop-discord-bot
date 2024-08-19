@@ -2,28 +2,28 @@
 This is a discord bot for handling character sheets, rulebooks, rolling dice, and tracking basic combat stats such as initiative and positioning. The main focus of this is d10 systems, such as old World of Darkness, but generalized application is the ultimate goal. Planned functions include exporting PDF versions of character sheets and rulebooks, as well as support for users building characters and updating them throughout the course of a campaign, and allowing for single users to control and switch between multiple characters at one time with ease.
 
 ## Project Structure
-├── dist
-│ └── [compiled JARs will be placed here]
-├── lib
-│ └── [external libraries will be downloaded here]
-├── src
-│ ├── main
-│ │ ├── java
-│ │ │ ├── cocoismagik
-│ │ │ │ ├── main
-│ │ │ │ │ ├── DataOutputter.java
-│ │ │ │ │ └── Main.java
-│ │ └── resources
-│ ├── test
-│ │ ├── MainTest.java
-│ │ └── Test.java
-├── test
-│ └── [compiled test classes will be placed here]
-├── build.sh
-├── lib.config
-├── LICENSE
-├── README.md
-├── test.sh
+├── dist\
+│ └── [compiled JARs will be placed here]\
+├── lib\
+│ └── [external libraries will be downloaded here]\
+├── src\
+│ ├── main\
+│ │ ├── java\
+│ │ │ ├── cocoismagik\
+│ │ │ │ ├── main\
+│ │ │ │ │ ├── DataOutputter.java\
+│ │ │ │ │ └── Main.java\
+│ │ └── resources\
+│ ├── test\
+│ │ ├── MainTest.java\
+│ │ └── Test.java\
+├── test\
+│ └── [compiled test classes will be placed here]\
+├── build.sh\
+├── lib.config\
+├── LICENSE\
+├── README.md\
+├── test.sh\
 └── update-libs.sh
 
 - **src/main/java**: Contains the main source code for your application.
@@ -76,5 +76,5 @@ This script manages the project's dependencies by downloading the latest JAR fil
 - Download the latest versions of the JAR files listed in lib.config.
 - Place the downloaded JAR files in the lib/ directory.
 
-## `lib.config`
+## lib.config
 The lib.config file lists the dependencies for the project. Each line specifies a dependency in the form of groupId:artifactId. Comments are added using #.

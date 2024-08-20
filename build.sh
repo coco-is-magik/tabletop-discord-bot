@@ -6,9 +6,11 @@ BIN_DIR="bin"
 LIB_DIR="lib"
 DIST_DIR="dist"
 
-# Clear the bin directory
+# Clear the bin and dist directories
 rm -rf $BIN_DIR/*
+rm -rf $DIST_DIR/*
 mkdir -p $BIN_DIR
+mkdir -p $DIST_DIR
 
 # Get the root folder name
 ROOT_FOLDER_NAME=$(basename "$PWD")
@@ -22,22 +24,31 @@ JAR_NAME="${ROOT_FOLDER_NAME}_${CURRENT_DATE}.jar"
 # Initialize MAIN_CLASS
 MAIN_CLASS=""
 
-# 1. Find the Main class
+# Working directory
+w_dir="$(pwd)"
+
+# 1. Extract the non-JUnit JARs into the bin directory
+for jar in $LIB_DIR/*.jar; do
+    if [[ "$jar" != *"junit"* ]]; then
+        r_jar="$(realpath "$jar")"
+        cd "$BIN_DIR"
+        jar -xf "$r_jar"
+        cd "$w_dir"
+    fi
+done
+
+# 2. Compile the Java files against the extracted classes
+javac -d $BIN_DIR -sourcepath $SRC_DIR -cp "$BIN_DIR" $(find $SRC_DIR -name "*.java")
+if [ $? -ne 0 ]; then
+    echo "Compilation failed."
+    exit 1
+fi
+
+# 3. Find the Main class
 MAIN_CLASS=$(grep -rl 'public static void main' $SRC_DIR | sed "s|$SRC_DIR/||;s|.java||;s|/|.|g")
 
 if [ -z "$MAIN_CLASS" ]; then
     echo "Error: Could not find a Main class."
-    exit 1
-fi
-
-# 2. Find all Java files
-JAVA_FILES=$(find $SRC_DIR -name "*.java")
-
-# 3. Compile the Java files, excluding JUnit jars
-NON_JUNIT_CLASSPATH=$(find $LIB_DIR -name "*.jar" | grep -v "junit" | tr '\n' ':')
-javac -d $BIN_DIR -sourcepath $SRC_DIR -cp "$NON_JUNIT_CLASSPATH" $JAVA_FILES
-if [ $? -ne 0 ]; then
-    echo "Compilation failed."
     exit 1
 fi
 
@@ -46,21 +57,10 @@ MANIFEST_FILE="MANIFEST.MF"
 echo "Manifest-Version: 1.0" > $MANIFEST_FILE
 echo "Main-Class: $MAIN_CLASS" >> $MANIFEST_FILE
 
-# Generate Class-Path for all non-JUnit jars in lib directory
-echo -n "Class-Path: " >> $MANIFEST_FILE
-for jar in $LIB_DIR/*.jar; do
-    jar_name=$(basename $jar)
-    if [[ $jar_name != *"junit"* ]]; then
-        echo -n "lib/$jar_name " >> $MANIFEST_FILE
-    fi
-done
-echo "" >> $MANIFEST_FILE  # Newline at the end
-
-# 5. Package everything into a JAR, excluding the lib directory itself
-mkdir -p $DIST_DIR
+# 5. Package everything into the final fat JAR
 jar cfm $DIST_DIR/$JAR_NAME $MANIFEST_FILE -C $BIN_DIR .
 
-# Clean up
+# Clean up the manifest file
 rm $MANIFEST_FILE
 
 # Output the absolute path of the newly created JAR file

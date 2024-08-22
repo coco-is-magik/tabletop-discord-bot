@@ -19,9 +19,11 @@ A Discord bot designed to assist with managing tabletop RPGs, focusing on charac
 
 ## Installation
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/coco-is-magik/tabletop-discord-bot.git
-   cd tabletop-discord-bot```
+```bash
+git clone https://github.com/coco-is-magik/tabletop-discord-bot.git
+cd tabletop-discord-bot
+```
+
 2. Build the project using the provided [Shell Scripts](#shell-scripts)
 ## Usage
 ### Running the built application

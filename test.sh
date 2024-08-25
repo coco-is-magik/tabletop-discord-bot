@@ -34,4 +34,4 @@ if [ $? -ne 0 ]; then
 fi
 
 # Run the tests by executing the Test class with the JAR path
-java -cp "$TEST_DIR:lib/*" test.Test "$JAR_PATH"
+java -Djunit.runner.verbose=true -cp "$TEST_DIR:lib/*" test.Test "$JAR_PATH"

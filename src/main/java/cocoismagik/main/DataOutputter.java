@@ -2,9 +2,9 @@ package cocoismagik.main;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -32,8 +32,9 @@ public class DataOutputter {
             String filename = "output.json";
     
             // Get the path to the directory where the jar file is located
-            URL url = Main.class.getProtectionDomain().getCodeSource().getLocation();
-            Path jarDir = Paths.get(url.toURI()).getParent();
+            URL url = DataOutputter.class.getProtectionDomain().getCodeSource().getLocation();
+            URI uri = new URI(url.toString().replace(" ", "%20")); // escape spaces
+            Path jarDir = Paths.get(uri).getParent();
             Path filePath = jarDir.resolve(filename).toAbsolutePath();
     
             // Check if the file exists
@@ -92,8 +93,8 @@ public class DataOutputter {
     
         try {
             Path jarPath = new File(System.getProperty("java.class.path")).toPath();
-            Path logFile = jarPath.getParent().resolve(jarPath.getFileName().toString().replace(".jar", ".log"));
-            Files.write(logFile, logMessage.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            Path logFilePath = jarPath.getParent().resolve(jarPath.getFileName().toString().replace(".jar", ".log"));
+            Files.write(logFilePath, logMessage.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException e) {
             System.err.println("Error writing to log file: " + e.getMessage());
         }

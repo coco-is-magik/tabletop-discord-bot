@@ -12,7 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 public class DataOutputter {
 
@@ -35,13 +36,29 @@ public class DataOutputter {
             Path jarDir = Paths.get(url.toURI()).getParent();
             Path filePath = jarDir.resolve(filename).toAbsolutePath();
     
-            // Ensure the file exists
+            // Check if the file exists
             if (!Files.exists(filePath)) {
+                // If the file doesn't exist, create it
                 Files.createFile(filePath);
+                // Write the initial JSON array
+                Files.write(filePath, Arrays.asList("["), StandardCharsets.UTF_8);
             }
     
-            // Write JSON to the file, appending it
-            Files.write(filePath, Collections.singletonList(jsonEntry), StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+            // Read the existing data from the file
+            List<String> existingData = Files.readAllLines(filePath, StandardCharsets.UTF_8);
+    
+            // Check if the file is empty
+            if (existingData.size() == 1 && existingData.get(0).equals("[")) {
+                // If the file is empty, write the JSON object as the first element of the array
+                existingData.set(0, "[" + jsonEntry + "]");
+            } else {
+                // If the file is not empty, remove the last closing bracket and append the new JSON object
+                existingData.set(existingData.size() - 1, existingData.get(existingData.size() - 1).replaceAll("]$", ""));
+                existingData.add(", " + jsonEntry + "]");
+            }
+    
+            // Write the updated data back to the file
+            Files.write(filePath, existingData, StandardCharsets.UTF_8, StandardOpenOption.WRITE);
     
             return true;
         } catch (IOException e) {

@@ -2,7 +2,6 @@ package cocoismagik.main;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,7 +22,11 @@ public class DataOutputter {
     public static final int WARNING = 2;
     public static final int ERROR = 3;
 
-    public static boolean writeToFile(Object object) {
+    public static boolean writeToFile(Object object) throws IllegalArgumentException, IOException, URISyntaxException {
+        if (object == null) {
+            logMessage("Attempted to write null value to file", WARNING);
+            return true;
+        }
         try {
             // Serialize the object to JSON
             String jsonEntry = gson.toJson(object);
@@ -72,7 +75,7 @@ public class DataOutputter {
         return false;
     }
 
-    public static void logMessage(String message, int level) {
+    public static boolean logMessage(String message, int level) {
         level = Math.max(1, Math.min(3, level));
         String color = switch (level) {
             case INFO -> "\u001B[34m"; // Blue (Info)
@@ -92,12 +95,23 @@ public class DataOutputter {
         System.out.println(printMessage);
     
         try {
-            Path jarPath = new File(System.getProperty("java.class.path")).toPath();
-            Path logFilePath = jarPath.getParent().resolve(jarPath.getFileName().toString().replace(".jar", ".log"));
-            Files.write(logFilePath, logMessage.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            // Get the path to the directory where the jar file is located
+            String filename = "tabletop-discord-bot.log";
+            URL url = DataOutputter.class.getProtectionDomain().getCodeSource().getLocation();
+            URI uri = new URI(url.toString().replace(" ", "%20")); // escape spaces
+            Path jarDir = Paths.get(uri).getParent();
+            Path filePath = jarDir.resolve(filename).toAbsolutePath();
+            //Path jarPath = new File(System.getProperty("java.class.path")).toPath();
+            //Path logFilePath = jarPath.getParent().resolve(jarPath.getFileName().toString().replace(".jar", ".log"));
+            Files.write(filePath, logMessage.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException e) {
             System.err.println("Error writing to log file: " + e.getMessage());
+            return false;
+        } catch (URISyntaxException e) {
+            System.err.println("Error writing to log file: " + e.getMessage());
+            return false;
         }
+        return true;
     }
 }
 

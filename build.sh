@@ -8,7 +8,7 @@ DIST_DIR="dist"
 
 # Clear the bin and dist directories
 rm -rf $BIN_DIR/*
-rm -rf $DIST_DIR/*
+rm -rf $DIST_DIR/*.log $DIST_DIR/*.jar $DIST_DIR/*.config
 mkdir -p $BIN_DIR
 mkdir -p $DIST_DIR
 

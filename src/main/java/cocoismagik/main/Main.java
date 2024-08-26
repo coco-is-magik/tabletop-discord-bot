@@ -1,4 +1,7 @@
 package cocoismagik.main;
+
+import cocoismagik.manager.ApiDataManager;
+
 public class Main {
     /**
      * The main entry point of the application.
@@ -7,6 +10,7 @@ public class Main {
      * @return     	none
      */
     public static void main(String[] args) {
-        System.out.println("Hello, World!");
+        DataOutputter.logMessage("Program start", DataOutputter.INFO);
+        ApiDataManager adm = ApiDataManager.getInstance();
     }
 }

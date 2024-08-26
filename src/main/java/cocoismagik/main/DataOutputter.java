@@ -22,6 +22,15 @@ public class DataOutputter {
     public static final int WARNING = 2;
     public static final int ERROR = 3;
 
+    /**
+     * Writes the given object to a file in JSON format.
+     *
+     * @param  object  the object to be written to the file
+     * @return          true if the object was successfully written to the file, false otherwise
+     * @throws IllegalArgumentException if the object is null
+     * @throws IOException if an I/O error occurs while writing to the file
+     * @throws URISyntaxException if the URI of the file is not valid
+     */
     public static boolean writeToFile(Object object) throws IllegalArgumentException, IOException, URISyntaxException {
         if (object == null) {
             logMessage("Attempted to write null value to file", WARNING);
@@ -75,6 +84,16 @@ public class DataOutputter {
         return false;
     }
 
+    /**
+     * Logs a message to the console and writes it to a log file.
+     * 
+     * The message is logged with a specific level (INFO, WARNING, or ERROR) and a timestamp.
+     * The log level is used to determine the color of the message in the console.
+     * 
+     * @param message the message to be logged
+     * @param level   the level of the message (1 = INFO, 2 = WARNING, 3 = ERROR)
+     * @return true if the message was successfully written to the log file, false otherwise
+     */
     public static boolean logMessage(String message, int level) {
         level = Math.max(1, Math.min(3, level));
         String color = switch (level) {

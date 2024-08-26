@@ -5,6 +5,12 @@ import org.junit.platform.console.ConsoleLauncher;
 
 public class Test {
 
+    /**
+     * The main entry point of the Java application, responsible for validating and processing the provided JAR file path.
+     *
+     * @param  args	an array of command-line arguments, expected to contain a single element representing the absolute path to the JAR file
+     * @return     	none
+     */
     public static void main(String[] args) {
         // Check if the JAR path is provided
         if (args.length != 1) {

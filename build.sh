@@ -7,8 +7,7 @@ LIB_DIR="lib"
 DIST_DIR="dist"
 
 # Clear the bin and dist directories
-rm -rf $BIN_DIR/*
-rm -rf $DIST_DIR/*.log $DIST_DIR/*.jar $DIST_DIR/*.config
+rm -rf $DIST_DIR/*.log $DIST_DIR/*.jar $DIST_DIR/*.json
 mkdir -p $BIN_DIR
 mkdir -p $DIST_DIR
 
@@ -31,9 +30,18 @@ w_dir="$(pwd)"
 for jar in $LIB_DIR/*.jar; do
     if [[ "$jar" != *"junit"* ]]; then
         r_jar="$(realpath "$jar")"
-        cd "$BIN_DIR"
-        jar -xf "$r_jar"
-        cd "$w_dir"
+        jar_mod_time=$(stat -c %Y "$r_jar")
+        dir_mod_time=$(stat -c %Y "$w_dir/extracted_jars/extracted_$(basename "$jar" .jar)")
+        if [ ! -d "$w_dir/extracted_jars/extracted_$(basename "$jar" .jar)" ] || [ "$jar_mod_time" -gt "$dir_mod_time" ]; then
+            # Create a marker directory to signify extraction has been done
+            mkdir -p "$w_dir/extracted_jars/extracted_$(basename "$jar" .jar)"
+            rm -rf "$w_dir/extracted_jars/extracted_$(basename "$jar" .jar)/*"
+            # Extract the JAR file contents directly into the bin directory
+            cd "$w_dir/extracted_jars/extracted_$(basename "$jar" .jar)"
+            jar -xf "$r_jar"
+            cd "$w_dir"
+            rsync -a "$w_dir/extracted_jars/extracted_$(basename "$jar" .jar)/" "$BIN_DIR/"
+        fi
     fi
 done
 

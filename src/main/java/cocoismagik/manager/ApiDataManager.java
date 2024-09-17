@@ -10,8 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import cocoismagik.commands.Ping;
+import cocoismagik.commands.SlashCommandListener;
 import cocoismagik.main.DataOutputter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -119,7 +118,7 @@ public class ApiDataManager {
 
     public static void addEventListeners() {
         if (ApiDataManager.jda != null) {
-            ApiDataManager.jda.addEventListener(new Ping());
+            ApiDataManager.jda.addEventListener(new SlashCommandListener());
         } else {
             DataOutputter.logMessage("Attempted to add event listeners before JDA initialized", DataOutputter.ERROR);
         }
@@ -148,7 +147,9 @@ public class ApiDataManager {
                 if (testGuildFound) {
                     testingGuild.updateCommands().addCommands(
                         Commands.slash("ping", "Ping the bot")
-                            .addOption(OptionType.STRING, "message", "The message to send", false)
+                            .addOption(OptionType.STRING, "message", "The message to send", false),
+                        Commands.slash("dicegame", "Play a dice game")
+                            .addOption(OptionType.INTEGER, "guess", "The number to guess", true)
                     ).queue();
                     testingCommandsAdded = true;
                 } else {

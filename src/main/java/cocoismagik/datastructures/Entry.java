@@ -1,4 +1,4 @@
-package cocoismagik.rulebook;
+package cocoismagik.datastructures;
 
 public class Entry {
 

@@ -1,4 +1,4 @@
-package cocoismagik.rulebook;
+package cocoismagik.datastructures;
 
 import java.util.ArrayList;
 import java.util.HashMap;

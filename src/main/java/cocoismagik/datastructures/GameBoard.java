@@ -32,7 +32,7 @@ public class GameBoard {
         Space space1 = spaces.get(id1);
         Space space2 = spaces.get(id2);
 
-        if(space1 != null || space2 != null) {
+        if(space1 != null && space2 != null) {
             space1.addNeighbor(id2, distance);
             space2.addNeighbor(id1, distance);
         } else {
@@ -51,7 +51,7 @@ public class GameBoard {
         Space space1 = spaces.get(id1);
         Space space2 = spaces.get(id2);
 
-        if(space1 != null || space2 != null) {
+        if(space1 != null && space2 != null) {
             space1.addNeighbor(id2, distance);
         } else {
             DataOutputter.logMessage("failed to create directed connection between space 1: " + id1 + " and space 2: " + id2, DataOutputter.WARNING);

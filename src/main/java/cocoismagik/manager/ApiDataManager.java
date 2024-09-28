@@ -127,7 +127,7 @@ public class ApiDataManager {
     public static void getTestingGuild() {
         if (ApiDataManager.jda != null) {
             if (testServerId != null) {
-                testingGuild = ApiDataManager.jda.getGuildById(testServerId); // FIXME: take this as a command line argument or something
+                testingGuild = ApiDataManager.jda.getGuildById(testServerId);
                 if (testingGuild != null) {
                     testGuildFound = true;
                 } else {

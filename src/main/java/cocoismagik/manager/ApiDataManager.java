@@ -22,7 +22,6 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 
 public class ApiDataManager {
     // Final static variable to hold the single instance of the class
-    private static ApiDataManager instance = null;
     private static String tokenString = null;
     private static Long testServerId = null;
     private static boolean testGuildFound = false;
@@ -31,8 +30,11 @@ public class ApiDataManager {
     private static JDA jda = null;
     private static Guild testingGuild = null;
 
-    // Private constructor to prevent instantiation
-    private ApiDataManager() {
+    /**
+     * Start the Discord bot. This method will read the config file and log into Discord.
+     * It will also set up event listeners and add the testing and global commands.
+     */
+    public static void startDiscordBot() {
         DataOutputter.logMessage("ApiDataManager initializing", DataOutputter.INFO);
         try {
             /*
@@ -94,18 +96,22 @@ public class ApiDataManager {
             }
         }
         DataOutputter.logMessage("ApiDataManager initialized", DataOutputter.INFO);
+
+        // Perform other setup tasks
+        logAllGuilds();
+        addEventListeners();
+        getTestingGuild();
+        addTestingCommands();
+        addGlobalCommands();
     }
 
-    // Public method to provide access to the single instance
-    public static ApiDataManager getInstance() {
-        // We must wait to make the new instance until this is called because otherwise awaitready wont halt the thread
-        if (instance == null) {
-            instance = new ApiDataManager();
-        }
-        return instance;
-    }
-
-    public static void logAllGuilds() {
+    /**
+     * Logs all guilds the bot is connected to.
+     * 
+     * The method gets all guilds the bot is connected to and logs their names and IDs.
+     * If the JDA instance is not initialized, the method logs an error.
+     */
+    private static void logAllGuilds() {
         if (ApiDataManager.jda != null) {
             DataOutputter.logMessage("Logging all guilds", DataOutputter.INFO);
             for (Guild guild : ApiDataManager.jda.getGuilds()) {
@@ -116,7 +122,13 @@ public class ApiDataManager {
         }
     }
 
-    public static void addEventListeners() {
+    /**
+     * Adds event listeners to the JDA instance.
+     * 
+     * This method adds a SlashCommandListener to the JDA instance, which will receive events for slash commands.
+     * If the JDA instance is not initialized, the method logs an error.
+     */
+    private static void addEventListeners() {
         if (ApiDataManager.jda != null) {
             ApiDataManager.jda.addEventListener(new SlashCommandListener());
         } else {
@@ -124,7 +136,15 @@ public class ApiDataManager {
         }
     }
 
-    public static void getTestingGuild() {
+    /**
+     * Retrieves the testing guild, if it exists.
+     * 
+     * This method will search for the guild with the ID specified in the config file.
+     * If the guild exists, it will set the testingGuild field to the guild and set the
+     * testGuildFound field to true. If the guild does not exist, it will log an error.
+     * If the JDA instance is not initialized, the method will log an error and do nothing.
+     */
+    private static void getTestingGuild() {
         if (ApiDataManager.jda != null) {
             if (testServerId != null) {
                 testingGuild = ApiDataManager.jda.getGuildById(testServerId);
@@ -141,15 +161,20 @@ public class ApiDataManager {
         }
     }
 
-    public static void addTestingCommands() {
+    /**
+     * Adds testing commands to the testing guild, if it exists.
+     * 
+     * This method adds a single slash command to the testing guild, if it exists.
+     * If the guild does not exist, it will log an error. If the JDA instance is not
+     * initialized, the method will log an error and do nothing. Once the commands
+     * have been added, the testingCommandsAdded field will be set to true.
+     */
+    private static void addTestingCommands() {
         if (ApiDataManager.jda != null) {
             if (!testingCommandsAdded) {
                 if (testGuildFound) {
                     testingGuild.updateCommands().addCommands(
-                        Commands.slash("ping", "Ping the bot")
-                            .addOption(OptionType.STRING, "message", "The message to send", false),
-                        Commands.slash("dicegame", "Play a dice game")
-                            .addOption(OptionType.INTEGER, "guess", "The number to guess", true)
+                        Commands.slash("testcommanddefault", "returns default message")
                     ).queue();
                     testingCommandsAdded = true;
                 } else {
@@ -158,6 +183,28 @@ public class ApiDataManager {
             }
         } else {
             DataOutputter.logMessage("Attempted to add testing commands before JDA initialized", DataOutputter.ERROR);
+        }
+    }
+
+    /**
+     * Adds global commands to the JDA instance.
+     * 
+     * This method adds a single slash command to the JDA instance, which will be available
+     * in all guilds. If the JDA instance is not initialized, the method will log an error
+     * and do nothing. Once the commands have been added, the globalCommandsAdded field
+     * will be set to true.
+     */
+    private static void addGlobalCommands() {
+        if (ApiDataManager.jda != null) {
+            if (!globalCommandsAdded) {
+                ApiDataManager.jda.updateCommands().addCommands(
+                    Commands.slash("ping", "Ping the bot")
+                        .addOption(OptionType.STRING, "message", "The message to send", false)
+                ).queue();
+                globalCommandsAdded = true;
+            }
+        } else {
+            DataOutputter.logMessage("Attempted to add global commands before JDA initialized", DataOutputter.ERROR);
         }
     }
 }

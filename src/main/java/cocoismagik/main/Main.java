@@ -11,10 +11,6 @@ public class Main {
      */
     public static void main(String[] args) {
         DataOutputter.logMessage("Program start", DataOutputter.INFO);
-        ApiDataManager adm = ApiDataManager.getInstance(); // Creates the instance of the ApiDataManager
-        ApiDataManager.logAllGuilds();
-        ApiDataManager.addEventListeners();
-        ApiDataManager.getTestingGuild();
-        ApiDataManager.addTestingCommands();
+        ApiDataManager.startDiscordBot();
     }
 }

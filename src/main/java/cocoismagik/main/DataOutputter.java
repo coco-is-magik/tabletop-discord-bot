@@ -17,10 +17,12 @@ import java.util.List;
 public class DataOutputter {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static boolean firstLog = true;
 
     public static final int INFO = 1;
     public static final int WARNING = 2;
     public static final int ERROR = 3;
+    public static final int TERM = 4;
 
     /**
      * Writes the given object to a file in JSON format.
@@ -95,15 +97,30 @@ public class DataOutputter {
      * @return true if the message was successfully written to the log file, false otherwise
      */
     public static boolean logMessage(String message, int level) {
-        level = Math.max(1, Math.min(3, level));
+        if(!firstLog && level != TERM) {
+            // Remove the user prompt from the previous log message
+            System.out.print("\033[A"); // Move cursor up one line
+            System.out.print("\033[2K"); // Clear the current line
+            System.out.print("\033[G"); // Move cursor to the beginning of the line
+            System.out.flush();
+        } else if (level == TERM) {
+            System.out.print("\033[2K"); // Clear the current line
+            System.out.print("\033[G"); // Move cursor to the beginning of the line
+            System.out.flush();
+        }
+        firstLog = false;
+        String userPrompt = "(tabletop discord bot) >> ";
+        level = Math.max(1, Math.min(4, level));
         String color = switch (level) {
             case INFO -> "\u001B[34m"; // Blue (Info)
+            case TERM -> "\u001B[32m"; // Green (End)
             case WARNING -> "\u001B[33m"; // Yellow (Warning)
             case ERROR -> "\u001B[31m"; // Red (Error)
             default -> "";
         };
         String logLevel = switch (level) {
             case INFO -> "Info";
+            case TERM -> "End";
             case WARNING -> "Warning";
             case ERROR -> "Error";
             default -> "None";
@@ -112,7 +129,10 @@ public class DataOutputter {
         String printMessage = color + "[" + logLevel + "]" + " - " + logTime + " - " + message + "\u001B[0m";
         String logMessage = "[" + logLevel + "]" + " - " + logTime + " - " + message + "\n";
         System.out.println(printMessage);
-    
+        if(level != TERM) {
+            System.out.print(userPrompt);
+        }
+        
         try {
             // Get the path to the directory where the jar file is located
             String filename = "tabletop-discord-bot.log";

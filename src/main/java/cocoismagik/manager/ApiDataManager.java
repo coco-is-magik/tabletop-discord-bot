@@ -106,6 +106,19 @@ public class ApiDataManager {
     }
 
     /**
+     * Stops the Discord bot, if it is currently running.
+     * 
+     * The method is idempotent and does not do anything if the bot is already stopped.
+     * 
+     * @see JDABuilder#shutdown()
+     */
+    public static void stopDiscordBot() {
+        if (ApiDataManager.jda != null) {
+            ApiDataManager.jda.shutdown();
+        }
+    }
+
+    /**
      * Logs all guilds the bot is connected to.
      * 
      * The method gets all guilds the bot is connected to and logs their names and IDs.

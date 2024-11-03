@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import cocoismagik.commands.MessagePrefixCommandListener;
 import cocoismagik.commands.SlashCommandListener;
 import cocoismagik.main.DataOutputter;
 import net.dv8tion.jda.api.JDA;
@@ -19,6 +20,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class ApiDataManager {
     // Final static variable to hold the single instance of the class
@@ -83,6 +85,7 @@ public class ApiDataManager {
                 // Log into Discord and pull bot info
                 try {
                     ApiDataManager.jda = JDABuilder.createDefault(tokenString)
+                        .enableIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
                         .setStatus(OnlineStatus.ONLINE)
                         .setActivity(Activity.playing("Tabletop Games"))
                         .build()
@@ -144,6 +147,7 @@ public class ApiDataManager {
     private static void addEventListeners() {
         if (ApiDataManager.jda != null) {
             ApiDataManager.jda.addEventListener(new SlashCommandListener());
+            ApiDataManager.jda.addEventListener(new MessagePrefixCommandListener());
         } else {
             DataOutputter.logMessage("Attempted to add event listeners before JDA initialized", DataOutputter.ERROR);
         }

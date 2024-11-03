@@ -14,11 +14,10 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 
 public class MessagePrefixCommandListener extends ListenerAdapter {
-    
-    @Override
-    public void onMessageReceived(@Nonnull MessageReceivedEvent event){
+
+    private boolean checkForCommands(MessageReceivedEvent event) {
         // Ensure the bot does not respond to its own messages
-        if (event.getAuthor().isBot()) return;
+        if (event.getAuthor().isBot()) return false;
         
         Message message = event.getMessage();
         String content = message.getContentRaw();
@@ -127,5 +126,11 @@ public class MessagePrefixCommandListener extends ListenerAdapter {
                     break;
             }
         }
+        return true;
+    }
+    
+    @Override
+    public void onMessageReceived(@Nonnull MessageReceivedEvent event){
+        if(checkForCommands(event)) return;
     }
 }

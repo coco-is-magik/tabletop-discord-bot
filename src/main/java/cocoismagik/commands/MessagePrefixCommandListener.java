@@ -1,13 +1,17 @@
 package cocoismagik.commands;
 
 import javax.annotation.Nonnull;
-
+import java.util.List;
+import cocoismagik.interactables.EmbedRetriever;
+import cocoismagik.interactables.EmbedWrapper;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 
 public class MessagePrefixCommandListener extends ListenerAdapter {
     
@@ -86,6 +90,20 @@ public class MessagePrefixCommandListener extends ListenerAdapter {
                                .queue(thread -> {
                                    // Send an initial message in the thread
                                    thread.sendMessage("This is a private thread for character creation.").queue();
+
+                                   List<EmbedWrapper> embedWrappers = EmbedRetriever.getCharacterCreationInitialEmbeds();
+
+                                   for (EmbedWrapper wrapper : embedWrappers) {
+                                        MessageCreateAction messageAction = thread.sendMessageEmbeds(wrapper.getEmbedBuilder().build());
+
+                                        // Add action rows (components) if available
+                                        for (ActionRow actionRow : wrapper.getComponents()) {
+                                            messageAction = messageAction.addActionRow(actionRow.getComponents());
+                                        }
+
+                                        // Queue the message to send it
+                                        messageAction.queue();
+                                    }
 
                                    // Invite the original user who invoked the command
                                    thread.addThreadMember(event.getAuthor()).queue(

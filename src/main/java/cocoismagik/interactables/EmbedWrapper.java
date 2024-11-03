@@ -14,17 +14,33 @@ public class EmbedWrapper {
         this.components = components;
     }
 
-    // Method to get the built EmbedBuilder
+    
+    /**
+     * Gets the embed builder of the EmbedWrapper object.
+     * 
+     * @return the embed builder
+     */
     public EmbedBuilder getEmbedBuilder() {
         return embedBuilder;
     }
 
-    // Method to get the components
+    
+    /**
+     * Gets the list of components associated with the EmbedWrapper object.
+     * 
+     * @return the list of components
+     */
     public List<ActionRow> getComponents() {
         return components;
     }
 
-    // Static method to create an EmbedWrapper for reuse
+    
+    /**
+     * Creates an EmbedWrapper containing an embed for character race selection and
+     * an action row containing a string select menu with placeholder options.
+     * 
+     * @return an EmbedWrapper for character race selection
+     */
     public static EmbedWrapper createRaceSelectionEmbed() {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Step 1: Choose Character Race");

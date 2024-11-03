@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import cocoismagik.commands.MessagePrefixCommandListener;
 import cocoismagik.commands.SlashCommandListener;
+import cocoismagik.interactables.ComponentInteractionListener;
 import cocoismagik.main.DataOutputter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -148,6 +149,7 @@ public class ApiDataManager {
         if (ApiDataManager.jda != null) {
             ApiDataManager.jda.addEventListener(new SlashCommandListener());
             ApiDataManager.jda.addEventListener(new MessagePrefixCommandListener());
+            ApiDataManager.jda.addEventListener(new ComponentInteractionListener());
         } else {
             DataOutputter.logMessage("Attempted to add event listeners before JDA initialized", DataOutputter.ERROR);
         }

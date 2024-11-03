@@ -15,6 +15,12 @@ import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 
 public class MessagePrefixCommandListener extends ListenerAdapter {
 
+    /**
+     * Checks if the received message is a command (starts with "!") and handles it if it is.
+     * 
+     * @param event The event containing the message that was received.
+     * @return True if the message was a command, false if it was not.
+     */
     private boolean checkForCommands(MessageReceivedEvent event) {
         // Ensure the bot does not respond to its own messages
         if (event.getAuthor().isBot()) return false;
@@ -129,6 +135,13 @@ public class MessagePrefixCommandListener extends ListenerAdapter {
         return true;
     }
     
+        /**
+         * Handles any messages sent to the bot. If the message is a command (starts with '!'), it
+         * will be handled by the checkForCommands method and will not be processed further. If the
+         * message is not a command, it will be ignored.
+         *
+         * @param event The event containing the message
+         */
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event){
         if(checkForCommands(event)) return;

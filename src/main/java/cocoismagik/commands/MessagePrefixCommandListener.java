@@ -2,8 +2,11 @@ package cocoismagik.commands;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+
+import cocoismagik.datastructures.ThreadOwnershipTracker;
 import cocoismagik.interactables.EmbedRetriever;
 import cocoismagik.interactables.EmbedWrapper;
+import cocoismagik.main.DataOutputter;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -112,9 +115,25 @@ public class MessagePrefixCommandListener extends ListenerAdapter {
 
                                    // Invite the original user who invoked the command
                                    thread.addThreadMember(event.getAuthor()).queue(
-                                       success -> event.getChannel().sendMessage("You have been added to the private thread!").queue(),
-                                       failure -> event.getChannel().sendMessage("Failed to add you to the private thread.").queue()
+                                        //FIXME: ping a moderator
+                                       success -> {
+                                            event.getChannel().sendMessage("You have been added to the private thread!").queue();
+                                            String name = event.getAuthor().getName();
+                                            Long id = event.getAuthor().getIdLong();
+                                            String s = "Made charcreate thread for user named " + name + " with id " + id;
+                                            DataOutputter.logMessage(s, DataOutputter.INFO);
+                                        },
+                                       failure -> {
+                                            event.getChannel().sendMessage("Failed to add you to the private thread.").queue();
+                                            String name = event.getAuthor().getName();
+                                            Long id = event.getAuthor().getIdLong();
+                                            String s = "Failed to make charcreate thread for user named " + name + " with id " + id;
+                                            DataOutputter.logMessage(s, DataOutputter.ERROR);
+                                        }
                                    );
+
+                                   //assign the thread to the user
+                                   ThreadOwnershipTracker.addOwnership(event.getAuthor().getIdLong(), thread.getIdLong());
                                });
                     } else {
                         message.reply("This command can only be used in a server channel.").queue();

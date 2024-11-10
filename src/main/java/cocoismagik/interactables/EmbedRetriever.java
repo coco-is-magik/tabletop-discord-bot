@@ -52,7 +52,7 @@ public class EmbedRetriever {
 
         ActionRow sexSelectMenu = ActionRow.of(
             net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu.create("sex-selection")
-                        .setPlaceholder("Select character race")
+                        .setPlaceholder("Select character sex")
                         .addOption("Male", "male")
                         .addOption("Female", "female")
                         .build()

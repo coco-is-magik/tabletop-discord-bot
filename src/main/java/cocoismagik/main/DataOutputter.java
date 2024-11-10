@@ -17,7 +17,6 @@ import java.util.List;
 public class DataOutputter {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static boolean firstLog = true;
 
     public static final int INFO = 1;
     public static final int WARNING = 2;
@@ -97,18 +96,9 @@ public class DataOutputter {
      * @return true if the message was successfully written to the log file, false otherwise
      */
     public static boolean logMessage(String message, int level) {
-        if(!firstLog && level != TERM) {
-            // Remove the user prompt from the previous log message
-            System.out.print("\033[A"); // Move cursor up one line
-            System.out.print("\033[2K"); // Clear the current line
-            System.out.print("\033[G"); // Move cursor to the beginning of the line
-            System.out.flush();
-        } else if (level == TERM) {
-            System.out.print("\033[2K"); // Clear the current line
-            System.out.print("\033[G"); // Move cursor to the beginning of the line
-            System.out.flush();
-        }
-        firstLog = false;
+        System.out.print("\033[2K"); // Clear the current line
+        System.out.print("\033[G"); // Move cursor to the beginning of the line
+        System.out.flush();
         String userPrompt = "(tabletop discord bot) >> ";
         level = Math.max(1, Math.min(4, level));
         String color = switch (level) {

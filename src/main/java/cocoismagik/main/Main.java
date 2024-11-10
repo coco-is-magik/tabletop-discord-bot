@@ -16,7 +16,7 @@ public class Main {
         ApiDataManager.startDiscordBot();
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Basic Shell started. Type 'help' for commands or 'exit' to quit.");
+        DataOutputter.logMessage("Basic Shell started. Type 'help' for commands or 'exit' to quit.", DataOutputter.INFO);
 
         DataOutputter.logMessage("Starting user shell", DataOutputter.INFO);
         while (true) {

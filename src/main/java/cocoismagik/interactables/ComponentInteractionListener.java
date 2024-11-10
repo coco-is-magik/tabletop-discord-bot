@@ -135,12 +135,13 @@ public class ComponentInteractionListener extends ListenerAdapter {
                 break;
             default:
                 event.getHook().sendMessage("Button interaction not recognized.").queue();
-                break;
+                DataOutputter.logMessage("Button interaction called "+buttonId+" not recognized.", DataOutputter.WARNING);
+                return;
         }
         String name = event.getUser().getName();
         Long id = event.getUser().getIdLong();
         Long threadID = event.getChannel().getIdLong();
-        String s = "User named " + name + " with ID " + id + " made "+game+" "+sel+" selection in thread with ID "+threadID;
+        String s = "User named " + name + " with ID " + id + " started "+game+" "+sel+" selection in thread with ID "+threadID;
         DataOutputter.logMessage(s, DataOutputter.INFO);
     }
 
@@ -258,7 +259,8 @@ public class ComponentInteractionListener extends ListenerAdapter {
                 break;
             default:
                 event.getHook().sendMessage("Select menu interaction not recognized.").queue();
-                break;
+                DataOutputter.logMessage("Select menu interaction called " + selectMenuId + " not recognized.", DataOutputter.INFO);
+                return;
         }
         String name = event.getUser().getName();
         Long id = event.getUser().getIdLong();
@@ -273,25 +275,45 @@ public class ComponentInteractionListener extends ListenerAdapter {
 
         String modalId = event.getModalId(); // The ID of the modal interacted with
 
+        String game = "";
+        String sel = "";
+
         switch(modalId) {
             case "dnd5e-name-modal":
                 DND5eCharacterCreation.handleCharacterName(event);
+                game = "dnd5e";
+                sel = "name";
                 break;
             case "dnd5e-image-modal":
                 DND5eCharacterCreation.handleCharacterImage(event);
+                game = "dnd5e";
+                sel = "image";
                 break;
             case "dnd5e-desc-modal":
                 DND5eCharacterCreation.handleCharacterDescription(event);
+                game = "dnd5e";
+                sel = "description";
                 break;
             case "dnd5e-detail-modal":
                 DND5eCharacterCreation.handleCharacterDetail(event);
+                game = "dnd5e";
+                sel = "details";
                 break;
             case "dnd5e-backstory-modal":
                 DND5eCharacterCreation.handleCharacterBackstory(event);
+                game = "dnd5e";
+                sel = "backstory";
                 break;
             default:
                 event.getHook().sendMessage("Modal interaction not recognized.").queue();
-                break;
+                DataOutputter.logMessage("Modal interaction called " + modalId + " not recognized.", DataOutputter.WARNING);
+                return;
         }
+
+        String name = event.getUser().getName();
+        Long id = event.getUser().getIdLong();
+        Long threadID = event.getChannel().getIdLong();
+        String s = "User named " + name + " with ID " + id + " finished "+game+" "+sel+" selection in thread with ID "+threadID;
+        DataOutputter.logMessage(s, DataOutputter.INFO);
     }
 }

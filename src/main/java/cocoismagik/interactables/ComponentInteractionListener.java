@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import cocoismagik.datastructures.PlayerCharacters;
 import cocoismagik.datastructures.TTRPGChar;
 import cocoismagik.datastructures.ThreadOwnershipTracker;
+import cocoismagik.games.DND5eCharacterCreation;
 import cocoismagik.main.DataOutputter;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -16,9 +17,6 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 
 public class ComponentInteractionListener extends ListenerAdapter {
@@ -67,134 +65,6 @@ public class ComponentInteractionListener extends ListenerAdapter {
     }
 
     /**
-     * Handles the button interaction for the button with the custom ID
-     * "character-name-action". This method creates a modal with a text input for
-     * the user to enter a name for their character. The method then sends this
-     * modal to the user.
-     * 
-     * @param event The event that triggered this method.
-     */
-    private void handleCharacterNameAction(ButtonInteractionEvent event){
-        TextInput nameInput = TextInput.create("dnd5e-name", "Character Name", TextInputStyle.SHORT)
-            .setRequired(true)
-            .setRequiredRange(1, 100)
-            .setPlaceholder("Name of the Character")
-            .build();
-        
-        Modal modal = Modal.create("dnd5e-name-modal", "Character Name")
-            .addComponents(ActionRow.of(nameInput))
-            .build();
-
-        event.replyModal(modal).queue();
-    }
-
-    /**
-     * Handles the button interaction for the button with the custom ID
-     * "dnd5e-url". This method creates a modal with a text input for the user
-     * to enter a URL for their character's image. The method then sends this
-     * modal to the user.
-     *
-     * @param event The event that triggered this method.
-     */
-    private void handleCharacterImageDisplay(ButtonInteractionEvent event){
-        TextInput urlInput = TextInput.create("dnd5e-url", "Character Image", TextInputStyle.SHORT)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("URL for character image")
-            .build();
-        
-        Modal modal = Modal.create("dnd5e-image-modal", "Character Image")
-            .addComponents(ActionRow.of(urlInput))
-            .build();
-
-        event.replyModal(modal).queue();
-    }
-
-    /**
-     * Handles the button interaction for the button with the custom ID
-     * "dnd5e-desc". This method creates a modal with a text input for the user
-     * to enter their character's physical description. The method then sends
-     * this modal to the user.
-     * 
-     * @param event The event that triggered this method.
-     */
-    private void handleCharacterDescription(ButtonInteractionEvent event){
-        TextInput urlInput = TextInput.create("dnd5e-desc", "Character Description", TextInputStyle.PARAGRAPH)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("Physical description of character")
-            .build();
-        
-        Modal modal = Modal.create("dnd5e-desc-modal", "Character Description")
-            .addComponents(ActionRow.of(urlInput))
-            .build();
-
-        event.replyModal(modal).queue();
-    }
-
-    /**
-     * Handles the button interaction for the button with the custom ID
-     * "dnd5e-details". This method creates a modal with text inputs for the user
-     * to enter their character's personality traits, ideals, bonds, and flaws.
-     * The method then sends this modal to the user.
-     * 
-     * @param event The event that triggered this method.
-     */
-    private void handleCharacterDetails(ButtonInteractionEvent event){
-        TextInput personalityInput = TextInput.create("dnd5e-detail-personality", "Character Personality Traits", TextInputStyle.PARAGRAPH)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("Personality traits")
-            .build();
-        
-        TextInput idealsInput = TextInput.create("dnd5e-detail-ideals", "Character Ideals", TextInputStyle.PARAGRAPH)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("Character ideals")
-            .build();
-        
-        TextInput bondsInput = TextInput.create("dnd5e-detail-bonds", "Character Bonds", TextInputStyle.PARAGRAPH)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("Character bonds")
-            .build();
-        
-        TextInput flawsInput = TextInput.create("dnd5e-detail-flaws", "Character Personality Flaws", TextInputStyle.PARAGRAPH)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("Personality flaws")
-            .build();
-        
-        Modal modal = Modal.create("dnd5e-desc-modal", "Character Description")
-            .addComponents(ActionRow.of(personalityInput), ActionRow.of(idealsInput), ActionRow.of(bondsInput), ActionRow.of(flawsInput))
-            .build();
-
-        event.replyModal(modal).queue();
-    }
-
-    /**
-     * Handles the button interaction for the button with the custom ID
-     * "dnd5e-backstory". The method creates a modal with a text input for the
-     * user to enter their character's backstory. The method then sends this
-     * modal to the user.
-     * 
-     * @param event The event that triggered this method.
-     */
-    private void handleCharacterBackstory(ButtonInteractionEvent event){
-        TextInput backstoryInput = TextInput.create("dnd5e-backstory", "Character Backstory", TextInputStyle.PARAGRAPH)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("Character backstory")
-            .build();
-        
-        Modal modal = Modal.create("dnd5e-backstory-modal", "Character Description")
-            .addComponents(ActionRow.of(backstoryInput))
-            .build();
-
-        event.replyModal(modal).queue();
-    }
-
-    /**
      * Listens for button interactions and executes the associated logic.
      * 
      * The method provides a default case to handle button interactions that are not recognized.
@@ -214,31 +84,31 @@ public class ComponentInteractionListener extends ListenerAdapter {
         switch (buttonId) {
             case "character-name-action":
                 // Handle character name action
-                handleCharacterNameAction(event);
+                DND5eCharacterCreation.handleCharacterNameAction(event);
                 game = "dnd5e";
                 sel = "name";
                 break;
             case "character-image-display":
                 // Handle character image display action
-                handleCharacterImageDisplay(event);
+                DND5eCharacterCreation.handleCharacterImageDisplay(event);
                 game = "dnd5e";
                 sel = "image";
                 break;
             case "character-description":
                 // Handle character description action
-                handleCharacterDescription(event);
+                DND5eCharacterCreation.handleCharacterDescription(event);
                 game = "dnd5e";
                 sel = "description";
                 break;
             case "character-details":
                 // Handle character details action
-                handleCharacterDetails(event);
+                DND5eCharacterCreation.handleCharacterDetails(event);
                 game = "dnd5e";
                 sel = "details";
                 break;
             case "character-backstory":
                 // Handle character backstory action
-                handleCharacterBackstory(event);
+                DND5eCharacterCreation.handleCharacterBackstory(event);
                 game = "dnd5e";
                 sel = "backstory";
                 break;
@@ -258,6 +128,8 @@ public class ComponentInteractionListener extends ListenerAdapter {
      * 
      * The method disables the string select menu, sends a confirmation message, and then sends the embeds and action
      * rows associated with the selected game.
+     * 
+     * This method expects the interaction to have already been acknowledged with a deferReply().
      * 
      * @param event The StringSelectInteractionEvent.
      */
@@ -312,30 +184,6 @@ public class ComponentInteractionListener extends ListenerAdapter {
         }
     }
 
-    private void handleSexSelectionMenu(StringSelectInteractionEvent event) {
-        //TODO: implement sex selection for dnd5e
-    }
-
-    private void handleAlignmentSelectionMenu(StringSelectInteractionEvent event) {
-        //TODO: implement alignment selection for dnd5e
-    }
-
-    private void handleRaceSelectionMenu(StringSelectInteractionEvent event) {
-        //TODO: implement race selection for dnd5e
-    }
-
-    private void handleClassSelectionMenu(StringSelectInteractionEvent event) {
-        //TODO: implement class selection for dnd5e
-    }
-
-    private void handleBackgroundSelectionMenu(StringSelectInteractionEvent event) {
-        //TODO: implement background selection for dnd5e
-    }
-
-    private void handleAttributeMethodSelectionMenu(StringSelectInteractionEvent event) {
-        //TODO: implement attribute selection for dnd5e
-    }
-
     /**
      * Listens for string select interactions and executes the associated logic.
      * 
@@ -358,32 +206,32 @@ public class ComponentInteractionListener extends ListenerAdapter {
                 sel = "game";
                 break;
             case "sex-selection":
-                handleSexSelectionMenu(event);
+                DND5eCharacterCreation.handleSexSelectionMenu(event);
                 game = "dnd5e";
                 sel = "sex";
                 break;
             case "alignment-selection":
-                handleAlignmentSelectionMenu(event);
+                DND5eCharacterCreation.handleAlignmentSelectionMenu(event);
                 game = "dnd5e";
                 sel = "alignment";
                 break;
             case "race-selection":
-                handleRaceSelectionMenu(event);
+                DND5eCharacterCreation.handleRaceSelectionMenu(event);
                 game = "dnd5e";
                 sel = "race";
                 break;
             case "class-selection":
-                handleClassSelectionMenu(event);
+                DND5eCharacterCreation.handleClassSelectionMenu(event);
                 game = "dnd5e";
                 sel = "class";
                 break;
             case "background-selection":
-                handleBackgroundSelectionMenu(event);
+                DND5eCharacterCreation.handleBackgroundSelectionMenu(event);
                 game = "dnd5e";
                 sel = "background";
                 break;
             case "attribute-method-selection":
-                handleAttributeMethodSelectionMenu(event);
+                DND5eCharacterCreation.handleAttributeMethodSelectionMenu(event);
                 game = "dnd5e";
                 sel = "attribute method";
                 break;

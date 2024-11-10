@@ -150,7 +150,7 @@ public class ComponentInteractionListener extends ListenerAdapter {
         TextInput idealsInput = TextInput.create("dnd5e-detail-ideals", "Character Ideals", TextInputStyle.PARAGRAPH)
             .setRequired(true)
             .setMinLength(1)
-            .setPlaceholder("Personality traits")
+            .setPlaceholder("Character ideals")
             .build();
         
         TextInput bondsInput = TextInput.create("dnd5e-detail-bonds", "Character Bonds", TextInputStyle.PARAGRAPH)

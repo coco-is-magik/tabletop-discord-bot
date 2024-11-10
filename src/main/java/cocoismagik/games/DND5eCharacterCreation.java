@@ -1,6 +1,7 @@
 package cocoismagik.games;
 
 import cocoismagik.main.DataOutputter;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -131,7 +132,7 @@ public class DND5eCharacterCreation {
             .setPlaceholder("Personality flaws")
             .build();
         
-        Modal modal = Modal.create("dnd5e-desc-modal", "Character Description")
+        Modal modal = Modal.create("dnd5e-detail-modal", "Character Description")
             .addComponents(ActionRow.of(personalityInput), ActionRow.of(idealsInput), ActionRow.of(bondsInput), ActionRow.of(flawsInput))
             .build();
         
@@ -201,4 +202,31 @@ public class DND5eCharacterCreation {
         //TODO: implement attribute selection for dnd5e
         event.getHook().sendMessage("Not implemented yet").queue();
     }
+
+    public static void handleCharacterName(ModalInteractionEvent event) {
+        //TODO: implement name selection for dnd5e
+        event.getHook().sendMessage("Not implemented yet").queue();
+    }
+
+    public static void handleCharacterImage(ModalInteractionEvent event) {
+        //TODO: implement image selection for dnd5e
+        event.getHook().sendMessage("Not implemented yet").queue();
+    }
+
+    public static void handleCharacterDescription(ModalInteractionEvent event) {
+        //TODO: implement description selection for dnd5e
+        event.getHook().sendMessage("Not implemented yet").queue();
+    }
+
+    public static void handleCharacterDetail(ModalInteractionEvent event) {
+        //TODO: implement detail selection for dnd5e
+        event.getHook().sendMessage("Not implemented yet").queue();
+    }
+
+    public static void handleCharacterBackstory(ModalInteractionEvent event) {
+        //TODO: implement backstory selection for dnd5e
+        event.getHook().sendMessage("Not implemented yet").queue();
+    }
+
+
 }

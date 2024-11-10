@@ -11,6 +11,8 @@ import cocoismagik.main.DataOutputter;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
@@ -38,8 +40,19 @@ public class ComponentInteractionListener extends ListenerAdapter {
      * @return True if the user is allowed to interact with the components, false
      *         otherwise.
      */
-    private boolean checkInteractionValidity(GenericComponentInteractionCreateEvent event){
-        event.deferReply().setEphemeral(true).queue();
+    @SuppressWarnings("null") // This is a false positive, the compiler is too fucking stupid to realize we return early in this case
+    private boolean checkInteractionValidity(GenericInteractionCreateEvent event){
+        ModalInteractionEvent m = null;
+        GenericComponentInteractionCreateEvent g = null;
+        if (event instanceof GenericComponentInteractionCreateEvent) {
+            g = (GenericComponentInteractionCreateEvent) event;
+        } else if (event instanceof ModalInteractionEvent) {
+            m = (ModalInteractionEvent) event;
+        } else {
+            return false;
+        }
+
+        ((m != null) ? m : g).deferReply().setEphemeral(true).queue();
 
         long userId = event.getUser().getIdLong();
 
@@ -47,11 +60,19 @@ public class ComponentInteractionListener extends ListenerAdapter {
             String s = "User named "+event.getUser().getName()+" with id "+event.getUser().getIdLong()
                         +" attempted to interact with thread "+event.getChannelIdLong()+" but does not own it.";
             DataOutputter.logMessage(s, DataOutputter.INFO);
-            event.getHook().sendMessage("You cannot interact with these components beccause this is not your thread.").queue();
+            ((m != null) ? m : g).getHook().sendMessage("You cannot interact with these components beccause this is not your thread.").queue();
             return false;
         }
 
-        GuildMessageChannel channel = event.getChannel().asGuildMessageChannel();
+        
+        //((m != null) ? m : g).getChannel().asGuildMessageChannel(); my beloved...
+        // It greatly fucking annoys me that the compiler cannot infer the type unless I do it this way
+        GuildMessageChannel channel;
+        if (m != null) {
+            channel = m.getChannel().asGuildMessageChannel();
+        } else {
+            channel = g.getChannel().asGuildMessageChannel();
+        }
 
         // Check if the channel is a private thread
         if (!(channel instanceof ThreadChannel)) {
@@ -244,5 +265,33 @@ public class ComponentInteractionListener extends ListenerAdapter {
         Long threadID = event.getChannel().getIdLong();
         String s = "User named " + name + " with ID " + id + " made "+game+" "+sel+" selection in thread with ID "+threadID;
         DataOutputter.logMessage(s, DataOutputter.INFO);
+    }
+
+    @Override
+    public void onModalInteraction(@Nonnull ModalInteractionEvent event) {
+        if(!checkInteractionValidity(event)) return; // Responds to event
+
+        String modalId = event.getModalId(); // The ID of the modal interacted with
+
+        switch(modalId) {
+            case "dnd5e-name-modal":
+                DND5eCharacterCreation.handleCharacterName(event);
+                break;
+            case "dnd5e-image-modal":
+                DND5eCharacterCreation.handleCharacterImage(event);
+                break;
+            case "dnd5e-desc-modal":
+                DND5eCharacterCreation.handleCharacterDescription(event);
+                break;
+            case "dnd5e-detail-modal":
+                DND5eCharacterCreation.handleCharacterDetail(event);
+                break;
+            case "dnd5e-backstory-modal":
+                DND5eCharacterCreation.handleCharacterBackstory(event);
+                break;
+            default:
+                event.getHook().sendMessage("Modal interaction not recognized.").queue();
+                break;
+        }
     }
 }

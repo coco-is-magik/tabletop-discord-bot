@@ -51,7 +51,7 @@ public class EmbedRetriever {
         );
 
         ActionRow sexSelectMenu = ActionRow.of(
-            net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu.create("race-selection")
+            net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu.create("sex-selection")
                         .setPlaceholder("Select character race")
                         .addOption("Male", "male")
                         .addOption("Female", "female")
@@ -148,7 +148,7 @@ public class EmbedRetriever {
         EmbedBuilder characterDetailsEmbed = new EmbedBuilder();
         characterDetailsEmbed.setTitle("Character Details");
         characterDetailsEmbed.setDescription("This character's information will be updated as you make changes with the buttons below.");
-        characterDetailsEmbed.setImage(null);
+        characterDetailsEmbed.setImage(null); // TODO: get a default image to go here
 
         embedList.add(new EmbedWrapper(characterDetailsEmbed, List.of(
             characterNameButtons,

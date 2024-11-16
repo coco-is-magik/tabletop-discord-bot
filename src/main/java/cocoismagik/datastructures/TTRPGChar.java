@@ -3,8 +3,6 @@ package cocoismagik.datastructures;
 import java.util.HashMap;
 import java.util.Map;
 
-import cocoismagik.main.DataOutputter;
-
 public class TTRPGChar {
     // Map for storing abilities (e.g., spells, special abilities, powers)
     private Map<String, Object> abilities;
@@ -58,7 +56,6 @@ public class TTRPGChar {
 
     // Methods for interacting with details
     public void addDetail(String detailName, Object detail) {
-        DataOutputter.logMessage(details.toString(), DataOutputter.WARNING);
         details.put(detailName, detail);
     }
 

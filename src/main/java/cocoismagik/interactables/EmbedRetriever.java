@@ -144,11 +144,15 @@ public class EmbedRetriever {
                     .build()
         );
 
+        EmbedBuilder characterDetailsDisplayEmbed = new EmbedBuilder();
+        characterDetailsDisplayEmbed.setTitle("Character Details");
+        characterDetailsDisplayEmbed.setDescription("Your character details will be displayed here as you update them.");
+        embedList.add(new EmbedWrapper(characterDetailsDisplayEmbed, List.of()));
+
         // Create an EmbedWrapper instance and add it to the list
         EmbedBuilder characterDetailsEmbed = new EmbedBuilder();
-        characterDetailsEmbed.setTitle("Character Details");
-        characterDetailsEmbed.setDescription("This character's information will be updated as you make changes with the buttons below.");
-        characterDetailsEmbed.setImage(null); // TODO: get a default image to go here
+        characterDetailsEmbed.setTitle("Character Detail Options");
+        characterDetailsEmbed.setDescription("Set your character details.");
 
         embedList.add(new EmbedWrapper(characterDetailsEmbed, List.of(
             characterNameButtons,

@@ -173,7 +173,8 @@ public class ComponentInteractionListener extends ListenerAdapter {
                 // Create character
                 PlayerCharacters pcs = PlayerCharacters.getInstance();
                 Long playerID = event.getUser().getIdLong();
-                pcs.addCharacter(playerID, new TTRPGChar(playerID));
+                Long threadID = event.getChannel().getIdLong();
+                pcs.addCharacter(playerID, new TTRPGChar(playerID, threadID));
 
                 // Wait for complete to make sure the character exists before allowing interactions with it
                 event.getHook().sendMessage("Selected: " + selectedOption).complete();
@@ -269,6 +270,13 @@ public class ComponentInteractionListener extends ListenerAdapter {
         DataOutputter.logMessage(s, DataOutputter.INFO);
     }
 
+    /**
+     * Listens for modal interactions and executes the associated logic.
+     * 
+     * The method provides a default case to handle modal interactions that are not recognized.
+     * 
+     * @param event The modal interaction event.
+     */
     @Override
     public void onModalInteraction(@Nonnull ModalInteractionEvent event) {
         if(!checkInteractionValidity(event)) return; // Responds to event

@@ -3,6 +3,8 @@ package cocoismagik.interactables;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+
+import cocoismagik.datastructures.CharacterCreationThreadDetailsEmbedTracker;
 import cocoismagik.datastructures.PlayerCharacters;
 import cocoismagik.datastructures.TTRPGChar;
 import cocoismagik.datastructures.ThreadOwnershipTracker;
@@ -181,7 +183,9 @@ public class ComponentInteractionListener extends ListenerAdapter {
 
                 List<EmbedWrapper> embedWrappers = EmbedRetriever.getDnd5eCreationEmbeds();
 
-                for (EmbedWrapper wrapper : embedWrappers) {
+                for (int i = 0; i < embedWrappers.size(); i++) {
+                    EmbedWrapper wrapper = embedWrappers.get(i);
+
                     MessageCreateAction messageAction = channel.sendMessageEmbeds(wrapper.getEmbedBuilder().build());
 
                     // Add action rows (components) if available
@@ -190,7 +194,11 @@ public class ComponentInteractionListener extends ListenerAdapter {
                     }
 
                     // Queue the message to send it
-                    messageAction.queue();
+                    Message message = messageAction.complete();
+
+                    if (i == 0) {
+                        CharacterCreationThreadDetailsEmbedTracker.addMessage(message.getIdLong(), event.getChannel().getIdLong());
+                    }
                 }
 
                 gameName = "D&D5E";

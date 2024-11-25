@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cocoismagik.main.DataOutputter;
+
 public class PlayerCharacters {
     private static PlayerCharacters instance;
 
@@ -39,6 +41,7 @@ public class PlayerCharacters {
      */
     public void addCharacter(Long playerID, TTRPGChar character) {
         //TODO: connect to database
+        DataOutputter.logMessage("Adding character to player "+playerID+": "+character.toString(), DataOutputter.INFO);
         characters.computeIfAbsent(playerID, k -> new ArrayList<>()).add(character);
     }
 

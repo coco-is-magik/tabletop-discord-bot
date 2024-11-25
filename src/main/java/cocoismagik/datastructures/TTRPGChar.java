@@ -21,11 +21,11 @@ public class TTRPGChar {
 
     public TTRPGChar(Long playerID, Long originThreadId) {
         this.playerID = playerID;
+        this.originThreadId = originThreadId;
         abilities = new HashMap<>();
         attributes = new HashMap<>();
         details = new HashMap<>();
         statistics = new HashMap<>();
-        PlayerCharacters.getInstance().addCharacter(playerID, this);
     }
 
     // Methods for interacting with abilities
@@ -86,5 +86,17 @@ public class TTRPGChar {
 
     public Long getOriginThreadId() {
         return originThreadId;
+    }
+
+    @Override
+    public String toString() {
+        return "TTRPGChar{" +
+                "abilities=" + abilities +
+                ", attributes=" + attributes +
+                ", details=" + details +
+                ", statistics=" + statistics +
+                ", playerID=" + playerID +
+                ", originThreadId=" + originThreadId +
+                '}';
     }
 }

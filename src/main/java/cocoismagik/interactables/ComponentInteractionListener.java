@@ -228,6 +228,8 @@ public class ComponentInteractionListener extends ListenerAdapter {
 
         String selectMenuId = event.getComponentId(); // The ID of the select menu interacted with
 
+        DataOutputter.logMessage("String select interaction called "+selectMenuId, DataOutputter.INFO);
+
         String game = "";
         String sel = "";
 
@@ -261,14 +263,14 @@ public class ComponentInteractionListener extends ListenerAdapter {
                 game = "dnd5e";
                 sel = "background";
                 break;
-            case "attribute-method-selection":
+            case "attribute-selection":
                 DND5eCharacterCreation.handleAttributeMethodSelectionMenu(event);
                 game = "dnd5e";
                 sel = "attribute method";
                 break;
             default:
                 event.getHook().sendMessage("Select menu interaction not recognized.").queue();
-                DataOutputter.logMessage("Select menu interaction called " + selectMenuId + " not recognized.", DataOutputter.INFO);
+                DataOutputter.logMessage("Select menu interaction called " + selectMenuId + " not recognized.", DataOutputter.WARNING);
                 return;
         }
         String name = event.getUser().getName();

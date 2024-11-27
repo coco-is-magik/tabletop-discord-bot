@@ -10,6 +10,7 @@ import cocoismagik.datastructures.CharacterCreationThreadDetailsEmbedTracker;
 import cocoismagik.datastructures.PlayerCharacters;
 import cocoismagik.datastructures.TTRPGChar;
 import cocoismagik.main.DataOutputter;
+import cocoismagik.main.URLChecker;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -258,7 +259,7 @@ public class DND5eCharacterCreation {
     public static File downloadImageWithCurl(String url) throws Exception {
         // Create a temporary directory for the download
         Path tempDir = Files.createTempDirectory("curl_download_temp");
-        File tempFile = new File(tempDir.toFile(), "downloaded_image.jpg"); //FIXME: support other file types and name this properly
+        File tempFile = new File(tempDir.toFile(), "downloaded_image");
 
         // Build the curl command as a list of arguments
         List<String> command = new ArrayList<>();
@@ -490,7 +491,30 @@ public class DND5eCharacterCreation {
     }
 
     public static void handleCharacterImage(ModalInteractionEvent event) {
-        handleAnyModalInput(event, "dnd5e-url");
+        //validate URL first
+        ModalMapping nameMapping = event.getValue("dnd5e-url");
+        if (nameMapping == null) {
+            event.getHook().sendMessage("Your input is invalid").queue();
+            DataOutputter.logMessage("Null input for dnd5e-url modal", DataOutputter.WARNING);
+            return;
+        }
+        String url = nameMapping.getAsString();
+        try {
+            boolean isSafeUrl = URLChecker.isSafeUrl(url, new String[]{"jpg", "jpeg", "png", "gif", "webp"});
+            if (isSafeUrl) {
+                handleAnyModalInput(event, "dnd5e-url");
+            } else {
+                throw new IllegalArgumentException("Unsafe URL detected");
+            }
+        } catch (IllegalArgumentException e) {
+            event.getHook().sendMessage("URL rejected because: "+e.getMessage()).queue();
+            DataOutputter.logMessage("Error parsing URL: "+e.getMessage(), DataOutputter.ERROR);
+            return;
+        } catch (Exception e) {
+            event.getHook().sendMessage("Something went wrong!").queue();
+            DataOutputter.logMessage("Unexpected error handling URL input for DND character creation flow: "+ e.getMessage(), DataOutputter.WARNING);
+            return;
+        }
     }
 
     public static void handleCharacterDescription(ModalInteractionEvent event) {

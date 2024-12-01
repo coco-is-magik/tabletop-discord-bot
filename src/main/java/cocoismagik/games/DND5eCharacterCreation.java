@@ -52,10 +52,11 @@ public class DND5eCharacterCreation {
             .build();
 
         try{
-            event.replyModal(modal).queue();
+            event.replyModal(modal).complete();
         }catch(Exception e){
-            event.getHook().sendMessage("There was an error processing the request.").queue();
+            event.getHook().sendMessage("There was an error processing the request.").setEphemeral(true).queue();
             DataOutputter.logMessage("Attempted to send modal but the event was already acknowledged!", DataOutputter.ERROR);
+            return;
         }
     }
 
@@ -81,10 +82,11 @@ public class DND5eCharacterCreation {
             .build();
         
         try{
-            event.replyModal(modal).queue();
+            event.replyModal(modal).complete();
         }catch(Exception e){
-            event.getHook().sendMessage("There was an error processing the request.").queue();
+            event.getHook().sendMessage("There was an error processing the request.").setEphemeral(true).queue();
             DataOutputter.logMessage("Attempted to send modal but the event was already acknowledged!", DataOutputter.ERROR);
+            return;
         }
     }
 
@@ -110,10 +112,11 @@ public class DND5eCharacterCreation {
             .build();
 
         try{
-            event.replyModal(modal).queue();
+            event.replyModal(modal).complete();
         }catch(Exception e){
-            event.getHook().sendMessage("There was an error processing the request.").queue();
+            event.getHook().sendMessage("There was an error processing the request.").setEphemeral(true).queue();
             DataOutputter.logMessage("Attempted to send modal but the event was already acknowledged!", DataOutputter.ERROR);
+            return;
         }
     }
 
@@ -157,10 +160,11 @@ public class DND5eCharacterCreation {
             .build();
         
         try{
-            event.replyModal(modal).queue();
+            event.replyModal(modal).complete();
         }catch(Exception e){
-            event.getHook().sendMessage("There was an error processing the request.").queue();
+            event.getHook().sendMessage("There was an error processing the request.").setEphemeral(true).queue();
             DataOutputter.logMessage("Attempted to send modal but the event was already acknowledged!", DataOutputter.ERROR);
+            return;
         }
     }
 
@@ -186,11 +190,23 @@ public class DND5eCharacterCreation {
             .build();
 
         try{
-            event.replyModal(modal).queue();
+            event.replyModal(modal).complete();
         }catch(Exception e){
-            event.getHook().sendMessage("There was an error processing the request.").queue();
+            event.getHook().sendMessage("There was an error processing the request.").setEphemeral(false).queue();
             DataOutputter.logMessage("Attempted to send modal but the event was already acknowledged!", DataOutputter.ERROR);
+            return;
         }
+    }
+
+    public static void handleCharacterRandomization(ButtonInteractionEvent event){
+        event.getHook().sendMessage("Not implemented yet").queue();
+
+        //TODO: implement randomization
+        // Choose a random name
+        // Choose a random physical description
+        // Choose a random backstory
+        // Choose random personality traits and flaws
+        // Choose random ideals and bonds
     }
 
     private static Message missingDetailsEmbedRecover(ThreadChannel channel) {
@@ -239,6 +255,16 @@ public class DND5eCharacterCreation {
         return newCharacter;
     }
 
+    /**
+     * Returns the file extension corresponding to the given MIME content type.
+     *
+     * This method supports common image content types and standardizes certain
+     * extensions (e.g., ".jpeg" and ".JPG" are standardized to ".jpg").
+     *
+     * @param contentType the MIME type of the content (e.g., "image/jpeg")
+     * @return the file extension associated with the content type (e.g., ".jpg"),
+     *         or null if the content type is unsupported or unknown
+     */
     private static String getFileExtensionFromContentType(String contentType) {
         if (contentType == null) {
             return null;
@@ -258,6 +284,22 @@ public class DND5eCharacterCreation {
         }
     }
 
+    /**
+     * Downloads an image from the given URL using the curl command.
+     * 
+     * The method will throw an exception if the curl command fails to execute
+     * successfully or if the downloaded file is invalid or empty.
+     * 
+     * The method will also detect the file type of the downloaded file and
+     * append the appropriate file extension to the file name.
+     * 
+     * The method will also delete the downloaded file on exit.
+     * 
+     * @param url the URL of the image to download
+     * @return the downloaded file
+     * @throws Exception if the curl command fails to execute successfully or
+     *                   if the downloaded file is invalid or empty
+     */
     public static File downloadImageWithCurl(String url) throws Exception {
         // Create a temporary directory for the download
         Path tempDir = Paths.get(System.getProperty("java.io.tmpdir")).toAbsolutePath();
@@ -316,6 +358,13 @@ public class DND5eCharacterCreation {
         return tempFile;
     }
 
+    /**
+     * Downloads an image from the given URL and saves it to a temporary file.
+     * The file is deleted when the program exits.
+     * 
+     * @param imageUrl The URL of the image to download.
+     * @return The temporary file containing the image, or null if the download failed.
+     */
     private static File downloadImage(String imageUrl) {
         File tempFile;
         try {
@@ -330,10 +379,10 @@ public class DND5eCharacterCreation {
     }
 
     /**
-     * Updates the embed sent by the bot in the channel with the character's details.
+     * Updates the details embed for a character to reflect the current state of the character
      * 
-     * @param character The character to update the embed with.
-     * @param message The message containing the embed to update.
+     * @param character The character to update the details embed for
+     * @param message   The message that contains the details embed to update
      */
     private static void updateDetailsEmbed(TTRPGChar character, Message message){
         DataOutputter.logMessage("Updating character details embed", DataOutputter.INFO);
@@ -432,6 +481,14 @@ public class DND5eCharacterCreation {
         }
     }
 
+    /**
+     * Handles a StringSelectInteractionEvent with a custom ID that corresponds to a specific character detail.
+     * 
+     * The method sends a confirmation message to the user, adds the selected detail to the character, and then updates the details embed of the character.
+     * 
+     * @param event The StringSelectInteractionEvent.
+     * @param detailName The name of the detail that was selected.
+     */
     private static void handleAnyMenu(StringSelectInteractionEvent event, String detailName){
         event.getHook().sendMessage("You choose: " + event.getValues().get(0) + "!").queue();
 
@@ -452,30 +509,82 @@ public class DND5eCharacterCreation {
         updateDetailsEmbed(character, detailsEmbedMessage);
     }
 
+    /**
+     * Handles the logic for string select interactions where the select menu ID is
+     * "sex-selection". This method is a wrapper around {@link #handleAnyMenu(StringSelectInteractionEvent, String)}
+     * and passes the detail name as "sex".
+     * 
+     * @param event The string select interaction event.
+     */
     public static void handleSexSelectionMenu(StringSelectInteractionEvent event) {
         handleAnyMenu(event, "sex");
     }
 
+    /**
+     * Handles the logic for string select interactions where the select menu ID is
+     * "alignment-selection". This method is a wrapper around {@link #handleAnyMenu(StringSelectInteractionEvent, String)}
+     * and passes the detail name as "alignment".
+     * 
+     * @param event The string select interaction event.
+     */
     public static void handleAlignmentSelectionMenu(StringSelectInteractionEvent event) {
         handleAnyMenu(event, "alignment");
     }
 
+    /**
+     * Handles the logic for string select interactions where the select menu ID is
+     * "race-selection". This method is a wrapper around {@link #handleAnyMenu(StringSelectInteractionEvent, String)}
+     * and passes the detail name as "race".
+     * 
+     * @param event The string select interaction event.
+     */
     public static void handleRaceSelectionMenu(StringSelectInteractionEvent event) {
         handleAnyMenu(event, "race");
     }
 
+    /**
+     * Handles the logic for string select interactions where the select menu ID is
+     * "class-selection". This method is a wrapper around {@link #handleAnyMenu(StringSelectInteractionEvent, String)}
+     * and passes the detail name as "class".
+     * 
+     * @param event The string select interaction event.
+     */
     public static void handleClassSelectionMenu(StringSelectInteractionEvent event) {
         handleAnyMenu(event, "class");
     }
 
+    /**
+     * Handles the logic for string select interactions where the select menu ID is
+     * "background-selection". This method is a wrapper around {@link #handleAnyMenu(StringSelectInteractionEvent, String)}
+     * and passes the detail name as "background".
+     * 
+     * @param event The string select interaction event.
+     */
     public static void handleBackgroundSelectionMenu(StringSelectInteractionEvent event) {
         handleAnyMenu(event, "background");
     }
 
+    /**
+     * Handles the logic for string select interactions where the select menu ID is
+     * "attribute-selection". This method is a wrapper around {@link #handleAnyMenu(StringSelectInteractionEvent, String)}
+     * and passes the detail name as "attribute_method".
+     * 
+     * @param event The string select interaction event.
+     */
     public static void handleAttributeMethodSelectionMenu(StringSelectInteractionEvent event) {
         handleAnyMenu(event, "attribute_method");
     }
 
+    /**
+     * Processes the input from a modal interaction event and updates the character details accordingly.
+     *
+     * This method retrieves the input value from the modal, validates it, and associates it with the
+     * corresponding character attribute. It then updates the character's details in the embedded message
+     * within the thread channel.
+     * 
+     * @param event The modal interaction event containing the user's input.
+     * @param value The identifier for the modal input value to be processed.
+     */
     private static void handleAnyModalInput(ModalInteractionEvent event, String value) {
         //FIXME: image does not update right
         ModalMapping nameMapping = event.getValue(value);
@@ -509,10 +618,24 @@ public class DND5eCharacterCreation {
         updateDetailsEmbed(character, detailsEmbedMessage);
     }
 
+    /**
+     * Handles the modal interaction for entering a character's name.
+     * This method retrieves the input from the modal and processes it
+     * accordingly.
+     * 
+     * @param event The modal interaction event.
+     */
     public static void handleCharacterName(ModalInteractionEvent event) {
         handleAnyModalInput(event, "dnd5e-name");
     }
 
+    /**
+     * Handles the modal interaction for entering a character's image URL.
+     * This method retrieves the input from the modal, validates it to ensure
+     * it is a safe URL that points to an image, and processes it accordingly.
+     * 
+     * @param event The modal interaction event.
+     */
     public static void handleCharacterImage(ModalInteractionEvent event) {
         //validate URL first
         ModalMapping nameMapping = event.getValue("dnd5e-url");
@@ -540,10 +663,23 @@ public class DND5eCharacterCreation {
         }
     }
 
+    /**
+     * Handles the modal interaction for entering a character's physical description.
+     * This method retrieves the input from the modal and processes it accordingly.
+     * 
+     * @param event The modal interaction event.
+     */
     public static void handleCharacterDescription(ModalInteractionEvent event) {
         handleAnyModalInput(event, "dnd5e-desc");
     }
 
+    /**
+     * Handles the modal interaction for entering a character's personality traits, ideals, bonds, and personality flaws.
+     * This method retrieves the input from the modal and updates the character's details accordingly. It then updates the 
+     * associated embed message with the new information.
+     * 
+     * @param event The modal interaction event containing the character's personality traits, ideals, bonds, and personality flaws.
+     */
     public static void handleCharacterDetail(ModalInteractionEvent event) {
         handleAnyModalInput(event, "dnd5e-detail-personality");
         handleAnyModalInput(event, "dnd5e-detail-ideals");
@@ -551,6 +687,14 @@ public class DND5eCharacterCreation {
         handleAnyModalInput(event, "dnd5e-detail-flaws");
     }
 
+    /**
+     * Handles the modal interaction for entering a character's backstory.
+     * This method retrieves the backstory input from the modal and updates the 
+     * character's details accordingly. It then updates the associated embed 
+     * message with the new backstory information.
+     * 
+     * @param event The modal interaction event containing the backstory input.
+     */
     public static void handleCharacterBackstory(ModalInteractionEvent event) {
         handleAnyModalInput(event, "dnd5e-backstory");
     }

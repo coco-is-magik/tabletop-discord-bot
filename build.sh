@@ -31,7 +31,8 @@ for jar in $LIB_DIR/*.jar; do
     if [[ "$jar" != *"junit"* ]]; then
         r_jar="$(realpath "$jar")"
         jar_mod_time=$(stat -c %Y "$r_jar")
-        dir_mod_time=$(stat -c %Y "$w_dir/extracted_jars/extracted_$(basename "$jar" .jar)")
+        #dir_mod_time=$(stat -c %Y "$w_dir/extracted_jars/extracted_$(basename "$jar" .jar)")
+        dir_mod_time=$(stat -c %Y "$w_dir/extracted_jars/extracted_$(basename "$jar" .jar)" 2>/dev/null || echo 0)
         if [ ! -d "$w_dir/extracted_jars/extracted_$(basename "$jar" .jar)" ] || [ "$jar_mod_time" -gt "$dir_mod_time" ]; then
             # Create a marker directory to signify extraction has been done
             mkdir -p "$w_dir/extracted_jars/extracted_$(basename "$jar" .jar)"

@@ -135,6 +135,11 @@ public class ComponentInteractionListener extends ListenerAdapter {
                 game = "dnd5e";
                 sel = "backstory";
                 break;
+            case "character-randomize":
+                // Handle character randomization action
+                DND5eCharacterCreation.handleCharacterRandomization(event);
+                game = "dnd5e";
+                sel = "randomize";
             default:
                 event.getHook().sendMessage("Button interaction not recognized.").queue();
                 DataOutputter.logMessage("Button interaction called "+buttonId+" not recognized.", DataOutputter.WARNING);

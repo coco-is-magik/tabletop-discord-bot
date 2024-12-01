@@ -61,6 +61,13 @@ public class URLChecker {
         DANGER_KEYWORDS.add("scp");
     }
 
+    /**
+     * Decodes a URL, returning the decoded string.
+     * 
+     * @param encodedUrl the URL to decode
+     * @return the decoded URL
+     * @throws IllegalArgumentException if the URL cannot be decoded
+     */
     private static String decodeUrl(String encodedUrl) {
         try {
             return URLDecoder.decode(encodedUrl, "UTF-8");
@@ -70,6 +77,12 @@ public class URLChecker {
         }
     }
 
+    /**
+     * Parses the query string of a URL and returns a map of key-value pairs.
+     * 
+     * @param urlString the URL to parse
+     * @return a map of query string parameters
+     */
     private static Map<String, String> getQueryParameters(String urlString) {
         Map<String, String> queryParameters = new HashMap<>();
         try {
@@ -90,6 +103,17 @@ public class URLChecker {
         return queryParameters;
     }
 
+    /**
+     * Verifies that the given URL is safe to download from. This involves checking
+     * the URL for signs of malicious activity, such as command injection or
+     * disallowed parameters, as well as checking that the URL is properly
+     * formatted and that the file extension is valid.
+     * 
+     * @param url the URL to verify
+     * @param validFileTypes a list of valid file types, or null if any file type is allowed
+     * @return true if the URL is safe to download from, false otherwise
+     * @throws IllegalArgumentException if the URL is not safe to download from
+     */
     public static boolean isSafeUrl(String url, String[] validFileTypes) {
         //TODO: query a list of known malicious sites to auto-reject those domains
 

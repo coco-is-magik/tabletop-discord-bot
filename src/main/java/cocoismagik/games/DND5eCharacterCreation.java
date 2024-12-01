@@ -2,10 +2,11 @@ package cocoismagik.games;
 
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import cocoismagik.datastructures.CharacterCreationThreadDetailsEmbedTracker;
 import cocoismagik.datastructures.PlayerCharacters;
 import cocoismagik.datastructures.TTRPGChar;
@@ -26,6 +27,7 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.utils.FileUpload;
+import org.apache.tika.Tika;
 
 public class DND5eCharacterCreation {
     /**
@@ -258,8 +260,10 @@ public class DND5eCharacterCreation {
 
     public static File downloadImageWithCurl(String url) throws Exception {
         // Create a temporary directory for the download
-        Path tempDir = Files.createTempDirectory("curl_download_temp");
-        File tempFile = new File(tempDir.toFile(), "downloaded_image");
+        Path tempDir = Paths.get(System.getProperty("java.io.tmpdir")).toAbsolutePath();
+
+        String hashedFileName = UUID.nameUUIDFromBytes(url.getBytes()).toString();
+        File tempFile = new File(tempDir.toFile(), hashedFileName);
 
         // Build the curl command as a list of arguments
         List<String> command = new ArrayList<>();
@@ -289,6 +293,25 @@ public class DND5eCharacterCreation {
         if (!tempFile.exists() || tempFile.length() == 0) {
             throw new RuntimeException("Downloaded file is invalid or empty: " + tempFile.getAbsolutePath());
         }
+
+        // Append appropriate file type from data
+        String mimeType = (new Tika()).detect(tempFile);
+        String fileExtension = getFileExtensionFromContentType(mimeType);
+
+        if (fileExtension == null) {
+            throw new RuntimeException("Unsupported file type: " + (mimeType != null ? mimeType : "null"));
+        } else {
+            // Append file extension
+            File tempFileWithExtension = new File(tempFile.getParent(), hashedFileName + fileExtension);
+            if (!tempFile.renameTo(tempFileWithExtension)) {
+                throw new RuntimeException("Failed to rename downloaded file: " + tempFile.getAbsolutePath());
+            }
+            tempFile = tempFileWithExtension;
+        }
+
+        // Cleanup
+        tempFile.deleteOnExit();
+        //TODO: delete files after awhile so we can use a cache system
 
         return tempFile;
     }

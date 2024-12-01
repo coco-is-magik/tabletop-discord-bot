@@ -8,6 +8,10 @@ CONFIG_FILE="lib.config"
 echo "Clearing the lib directory..."
 rm -rf $LIB_DIR/*
 
+# Clear extracted_jars directory
+echo "Clearing the extracted_jars directory..."
+rm -rf extracted_jars/*
+
 # Create the lib directory if it doesn't exist
 mkdir -p $LIB_DIR
 

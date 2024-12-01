@@ -42,12 +42,16 @@ public class EmbedRetriever {
         List<EmbedWrapper> embedList = new ArrayList<>();
 
         // Step 0: Choose character details
-        ActionRow characterNameButtons = ActionRow.of(
-            Button.primary("character-name-action", "Choose Name"),
-            Button.primary("character-image-display", "Set Image"),
-            Button.primary("character-description", "Add Description"),
-            Button.primary("character-details", "Details"),
-            Button.primary("character-backstory", "Backstory")
+        ActionRow buttonRow1 = ActionRow.of(
+            Button.secondary("character-name-action", "Name"),
+            Button.secondary("character-image-display", "Image URL"),
+            Button.secondary("character-description", "Physical Description ")
+        );
+
+        ActionRow buttonRow2 = ActionRow.of(
+            Button.secondary("character-backstory", "Write Character Backstory"),
+            Button.secondary("character-details", "Details and Traits"),
+            Button.primary("character-randomize", "Randomize")
         );
 
         ActionRow sexSelectMenu = ActionRow.of(
@@ -145,28 +149,40 @@ public class EmbedRetriever {
         );
 
         EmbedBuilder characterDetailsDisplayEmbed = new EmbedBuilder();
-        characterDetailsDisplayEmbed.setTitle("Character Details");
-        characterDetailsDisplayEmbed.setDescription("Your character details will be displayed here as you update them.");
+        characterDetailsDisplayEmbed.setTitle("In Progress Character Sheet");
+        characterDetailsDisplayEmbed.setDescription("As you make choices, this will get updated!");
         embedList.add(new EmbedWrapper(characterDetailsDisplayEmbed, List.of()));
 
         // Create an EmbedWrapper instance and add it to the list
         EmbedBuilder characterDetailsEmbed = new EmbedBuilder();
-        characterDetailsEmbed.setTitle("Character Detail Options");
-        characterDetailsEmbed.setDescription("Set your character details.");
+        characterDetailsEmbed.setTitle("Set Character Details");
+        characterDetailsEmbed.setDescription("Click each button for a prompt to enter your character's details. "
+        +"\n\nFor image URLs, some external resources might work, but if it's getting rejected you can upload a picture in this chat and "
+        +"copy that link instead. To do that you will need to download the image and then upload it from your computer, not just paste the "
+        +"link in the chat."
+        +"\n\nTo randomize your character details, just hit the randomize button and it will generate a random details for you, but not an "
+        +"image, you'll need to provide that link yourself still.");
 
         embedList.add(new EmbedWrapper(characterDetailsEmbed, List.of(
-            characterNameButtons,
+            buttonRow1,
+            buttonRow2
+        )));
+
+        EmbedBuilder number1DetailsBuilder = new EmbedBuilder();
+        number1DetailsBuilder.setTitle("Select Sex, Alignment, and Background");
+        number1DetailsBuilder.setDescription("You will be prompted for further details after you make selections.");
+        embedList.add(new EmbedWrapper(number1DetailsBuilder, List.of(
             sexSelectMenu,
-            alignmentSelectMenu
+            alignmentSelectMenu,
+            backgroundSelectMenu
         )));
          
-        EmbedBuilder otherDetailsBuilder = new EmbedBuilder();
-        otherDetailsBuilder.setTitle("Select Race, Class, Background, and Attribute Method");
-        otherDetailsBuilder.setDescription("You will be prompted for further details after you make selections.");
-        embedList.add(new EmbedWrapper(otherDetailsBuilder, List.of(
+        EmbedBuilder number2DetailsBuilder = new EmbedBuilder();
+        number2DetailsBuilder.setTitle("Select Race, Class, and Attribute Method");
+        number2DetailsBuilder.setDescription("You will be prompted for further details after you make selections.");
+        embedList.add(new EmbedWrapper(number2DetailsBuilder, List.of(
             raceSelectMenu,
             classSelectMenu,
-            backgroundSelectMenu,
             attributeSelectMenu
         )));
 

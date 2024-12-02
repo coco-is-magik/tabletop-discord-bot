@@ -5,16 +5,16 @@ import java.util.Map;
 
 import cocoismagik.main.DataOutputter;
 
-public class CharacterCreationThreadDetailsEmbedTracker {
+public class CharacterCreationThreadButtonsEmbedTracker {
     // Static map to store thread (key) to user (value) mappings
     private static final Map<Long, Long> threadToMessageMap = new HashMap<>();
 
     // Private constructor to prevent instantiation
-    private CharacterCreationThreadDetailsEmbedTracker() {
+    private CharacterCreationThreadButtonsEmbedTracker() {
     }
 
     /**
-     * Associates a message with a thread ID, marking the message as the details embed
+     * Associates a message with a thread ID, marking the message as the buttons embed
      * for the thread.
      * 
      * @param messageId the ID of the message to associate with the thread
@@ -35,7 +35,7 @@ public class CharacterCreationThreadDetailsEmbedTracker {
     }
 
     /**
-     * Removes the message associated with a thread ID as the details embed for that thread.
+     * Removes the message associated with a thread ID as the buttons embed for that thread.
      * 
      * @param messageId the ID of the message to remove
      * @param threadId  the ID of the thread whose associated message is to be removed
@@ -54,12 +54,12 @@ public class CharacterCreationThreadDetailsEmbedTracker {
     }
 
     /**
-     * Retrieves the message ID associated with a thread ID as the details embed for that thread.
+     * Retrieves the message ID associated with a thread ID as the buttons embed for that thread.
      * 
      * @param threadId the ID of the thread to retrieve the message ID for
      * @return the message ID associated with the thread, or null if not found
      */
-    public static Long getDetailsEmbedMessageLong(long threadId) {
+    public static Long getButtonsEmbedMessageLong(long threadId) {
         return threadToMessageMap.getOrDefault(threadId, null);
     }
 }

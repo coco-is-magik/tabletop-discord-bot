@@ -1,12 +1,13 @@
 package cocoismagik.games;
 
-
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import cocoismagik.datastructures.CharacterCreationThreadButtonsEmbedTracker;
 import cocoismagik.datastructures.CharacterCreationThreadDetailsEmbedTracker;
 import cocoismagik.datastructures.PlayerCharacters;
 import cocoismagik.datastructures.TTRPGChar;
@@ -21,15 +22,67 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
+import net.dv8tion.jda.api.requests.restaction.MessageEditAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.tika.Tika;
 
 public class DND5eCharacterCreation {
+
+    private static void makeButtonGreen(Message message, TTRPGChar character){
+        ActionRow buttonRow1;
+        ActionRow buttonRow2;
+
+        // Name to check name button
+        boolean hasName = character.getDetail("name") != null;
+        
+        // Check image button
+        boolean hasImage = character.getDetail("url") != null;
+
+        // Check description button
+        boolean hasDescription = character.getDetail("desc") != null;
+        
+        // Check details and traits button
+        boolean hasDetailsAndTraits = character.getDetail("detail-personality") != null
+            && character.getDetail("detail-ideals") != null
+            && character.getDetail("detail-bonds") != null
+            && character.getDetail("detail-flaws") != null;
+        
+        // Check backstory button
+        boolean hasBackstory = character.getDetail("backstory") != null;
+
+        buttonRow1 = ActionRow.of(
+            ((hasName) ? Button.success("character-name-action", "Name") : Button.secondary("character-name-action", "Name")),
+            ((hasImage) ? Button.success("character-image-display", "Image URL") : Button.secondary("character-image-display", "Image URL")),
+            ((hasDescription) ? Button.success("character-description", "Physical Description") : Button.secondary("character-description", "Physical Description"))
+        );
+
+        buttonRow2 = ActionRow.of(
+            ((hasBackstory) ? Button.success("character-backstory", "Write Character Backstory") : Button.secondary("character-backstory", "Write Character Backstory")),
+            ((hasDetailsAndTraits) ? Button.success("character-details", "Details and Traits") : Button.secondary("character-details", "Details and Traits")),
+            Button.primary("character-randomize", "Randomize")
+        );
+
+        EmbedBuilder characterDetailsEmbed = new EmbedBuilder();
+        characterDetailsEmbed.setTitle("Set Character Details");
+        characterDetailsEmbed.setDescription("Click each button for a prompt to enter your character's details. "
+        +"\n\nFor image URLs, some external resources might work, but if it's getting rejected you can upload a picture in this chat and "
+        +"copy that link instead. To do that you will need to download the image and then upload it from your computer, not just paste the "
+        +"link in the chat."
+        +"\n\nTo randomize your character details, just hit the randomize button and it will generate a random details for you, but not an "
+        +"image, you'll need to provide that link yourself still.");
+
+        MessageEditAction messageEditAction = message.editMessageEmbeds(characterDetailsEmbed.build());
+        messageEditAction.setComponents(buttonRow1, buttonRow2);
+        messageEditAction.queue();
+    }
+
+
     /**
      * Handles the button interaction for the button with the custom ID
      * "character-name-action". This method creates a modal with a text input for
@@ -616,6 +669,18 @@ public class DND5eCharacterCreation {
             detailsEmbedMessage = event.getChannel().asThreadChannel().retrieveMessageById(detailsEmbedMessageID).complete();
         }
         updateDetailsEmbed(character, detailsEmbedMessage);
+
+        Long buttonsEmbedMessageID = CharacterCreationThreadButtonsEmbedTracker.getButtonsEmbedMessageLong(event.getChannelIdLong());
+        Message buttonsEmbedMessage;
+        if (buttonsEmbedMessageID == null) {
+            String s = "Couldn't find the embedMessageID for " + event.getChannelIdLong();
+            DataOutputter.logMessage(s, DataOutputter.WARNING);
+            //FIXME: create recover method
+            return;
+        } else {
+            buttonsEmbedMessage = event.getChannel().asThreadChannel().retrieveMessageById(buttonsEmbedMessageID).complete();
+        }
+        makeButtonGreen(buttonsEmbedMessage, character);
     }
 
     /**

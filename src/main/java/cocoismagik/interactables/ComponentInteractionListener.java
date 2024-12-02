@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
+import cocoismagik.datastructures.CharacterCreationThreadButtonsEmbedTracker;
 import cocoismagik.datastructures.CharacterCreationThreadDetailsEmbedTracker;
 import cocoismagik.datastructures.PlayerCharacters;
 import cocoismagik.datastructures.TTRPGChar;
@@ -203,6 +204,8 @@ public class ComponentInteractionListener extends ListenerAdapter {
 
                     if (i == 0) {
                         CharacterCreationThreadDetailsEmbedTracker.addMessage(message.getIdLong(), event.getChannel().getIdLong());
+                    } else if (i == 1) {
+                        CharacterCreationThreadButtonsEmbedTracker.addMessage(message.getIdLong(), event.getChannel().getIdLong());
                     }
                 }
 

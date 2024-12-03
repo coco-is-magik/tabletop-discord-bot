@@ -3,13 +3,10 @@ package cocoismagik.interactables;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
-
-import cocoismagik.datastructures.CharacterCreationThreadButtonsEmbedTracker;
-import cocoismagik.datastructures.CharacterCreationThreadDetailsEmbedTracker;
 import cocoismagik.datastructures.PlayerCharacters;
 import cocoismagik.datastructures.TTRPGChar;
-import cocoismagik.datastructures.ThreadOwnershipTracker;
-import cocoismagik.games.DND5eCharacterCreation;
+import cocoismagik.datastructures.ThreadManagementTracker;
+import cocoismagik.games.dnd.five.CharacterCreation;
 import cocoismagik.main.DataOutputter;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -59,7 +56,7 @@ public class ComponentInteractionListener extends ListenerAdapter {
 
         long userId = event.getUser().getIdLong();
 
-        if (!ThreadOwnershipTracker.ownsThread(userId, event.getChannelIdLong())) {
+        if (!ThreadManagementTracker.ownsThread(userId, event.getChannelIdLong())) {
             String s = "User named "+event.getUser().getName()+" with id "+event.getUser().getIdLong()
                         +" attempted to interact with thread "+event.getChannelIdLong()+" but does not own it.";
             DataOutputter.logMessage(s, DataOutputter.INFO);
@@ -108,37 +105,37 @@ public class ComponentInteractionListener extends ListenerAdapter {
         switch (buttonId) {
             case "character-name-action":
                 // Handle character name action
-                DND5eCharacterCreation.handleCharacterNameAction(event);
+                CharacterCreation.handleCharacterNameAction(event);
                 game = "dnd5e";
                 sel = "name";
                 break;
             case "character-image-display":
                 // Handle character image display action
-                DND5eCharacterCreation.handleCharacterImageDisplay(event);
+                CharacterCreation.handleCharacterImageDisplay(event);
                 game = "dnd5e";
                 sel = "image";
                 break;
             case "character-description":
                 // Handle character description action
-                DND5eCharacterCreation.handleCharacterDescription(event);
+                CharacterCreation.handleCharacterDescription(event);
                 game = "dnd5e";
                 sel = "description";
                 break;
             case "character-details":
                 // Handle character details action
-                DND5eCharacterCreation.handleCharacterDetails(event);
+                CharacterCreation.handleCharacterDetails(event);
                 game = "dnd5e";
                 sel = "details";
                 break;
             case "character-backstory":
                 // Handle character backstory action
-                DND5eCharacterCreation.handleCharacterBackstory(event);
+                CharacterCreation.handleCharacterBackstory(event);
                 game = "dnd5e";
                 sel = "backstory";
                 break;
             case "character-randomize":
                 // Handle character randomization action
-                DND5eCharacterCreation.handleCharacterRandomization(event);
+                CharacterCreation.handleCharacterRandomization(event);
                 game = "dnd5e";
                 sel = "randomize";
             default:
@@ -201,11 +198,12 @@ public class ComponentInteractionListener extends ListenerAdapter {
 
                     // Queue the message to send it
                     Message message = messageAction.complete();
+                    Long messageID = message.getIdLong();
 
                     if (i == 0) {
-                        CharacterCreationThreadDetailsEmbedTracker.addMessage(message.getIdLong(), event.getChannel().getIdLong());
+                        ThreadManagementTracker.addThreadData(threadID, ThreadManagementTracker.DETAILS_EMBED, messageID);
                     } else if (i == 1) {
-                        CharacterCreationThreadButtonsEmbedTracker.addMessage(message.getIdLong(), event.getChannel().getIdLong());
+                        ThreadManagementTracker.addThreadData(threadID, ThreadManagementTracker.BUTTONS_EMBED, messageID);
                     }
                 }
 
@@ -247,32 +245,32 @@ public class ComponentInteractionListener extends ListenerAdapter {
                 sel = "game";
                 break;
             case "sex-selection":
-                DND5eCharacterCreation.handleSexSelectionMenu(event);
+                CharacterCreation.handleSexSelectionMenu(event);
                 game = "dnd5e";
                 sel = "sex";
                 break;
             case "alignment-selection":
-                DND5eCharacterCreation.handleAlignmentSelectionMenu(event);
+                CharacterCreation.handleAlignmentSelectionMenu(event);
                 game = "dnd5e";
                 sel = "alignment";
                 break;
             case "race-selection":
-                DND5eCharacterCreation.handleRaceSelectionMenu(event);
+                CharacterCreation.handleRaceSelectionMenu(event);
                 game = "dnd5e";
                 sel = "race";
                 break;
             case "class-selection":
-                DND5eCharacterCreation.handleClassSelectionMenu(event);
+                CharacterCreation.handleClassSelectionMenu(event);
                 game = "dnd5e";
                 sel = "class";
                 break;
             case "background-selection":
-                DND5eCharacterCreation.handleBackgroundSelectionMenu(event);
+                CharacterCreation.handleBackgroundSelectionMenu(event);
                 game = "dnd5e";
                 sel = "background";
                 break;
             case "attribute-selection":
-                DND5eCharacterCreation.handleAttributeMethodSelectionMenu(event);
+                CharacterCreation.handleAttributeMethodSelectionMenu(event);
                 game = "dnd5e";
                 sel = "attribute method";
                 break;
@@ -306,27 +304,27 @@ public class ComponentInteractionListener extends ListenerAdapter {
 
         switch(modalId) {
             case "dnd5e-name-modal":
-                DND5eCharacterCreation.handleCharacterName(event);
+                CharacterCreation.handleCharacterName(event);
                 game = "dnd5e";
                 sel = "name";
                 break;
             case "dnd5e-image-modal":
-                DND5eCharacterCreation.handleCharacterImage(event);
+                CharacterCreation.handleCharacterImage(event);
                 game = "dnd5e";
                 sel = "image";
                 break;
             case "dnd5e-desc-modal":
-                DND5eCharacterCreation.handleCharacterDescription(event);
+                CharacterCreation.handleCharacterDescription(event);
                 game = "dnd5e";
                 sel = "description";
                 break;
             case "dnd5e-detail-modal":
-                DND5eCharacterCreation.handleCharacterDetail(event);
+                CharacterCreation.handleCharacterDetail(event);
                 game = "dnd5e";
                 sel = "details";
                 break;
             case "dnd5e-backstory-modal":
-                DND5eCharacterCreation.handleCharacterBackstory(event);
+                CharacterCreation.handleCharacterBackstory(event);
                 game = "dnd5e";
                 sel = "backstory";
                 break;

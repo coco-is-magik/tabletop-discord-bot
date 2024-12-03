@@ -6,9 +6,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import cocoismagik.datastructures.CharacterCreationThreadButtonsEmbedTracker;
-import cocoismagik.datastructures.CharacterCreationThreadDetailsEmbedTracker;
+import cocoismagik.datastructures.ThreadManagementTracker;
 import cocoismagik.datastructures.PlayerCharacters;
 import cocoismagik.datastructures.TTRPGChar;
 import cocoismagik.main.DataOutputter;
@@ -550,7 +548,7 @@ public class CharacterCreation {
 
         TTRPGChar character = addDetailsToCharacter(detailName, event.getValues().get(0), playerID, threadID);
 
-        Long detailsEmbedMessageID = CharacterCreationThreadDetailsEmbedTracker.getDetailsEmbedMessageLong(event.getChannelIdLong());
+        Long detailsEmbedMessageID = ThreadManagementTracker.getThreadData(event.getChannelIdLong(), ThreadManagementTracker.DETAILS_EMBED);
         Message detailsEmbedMessage;
         if (detailsEmbedMessageID == null) {
             String s = "Couldn't find the embedMessageID for " + event.getChannelIdLong();
@@ -659,7 +657,7 @@ public class CharacterCreation {
 
         TTRPGChar character = addDetailsToCharacter(normValue, nameMapping.getAsString(), playerID, threadID);
         
-        Long detailsEmbedMessageID = CharacterCreationThreadDetailsEmbedTracker.getDetailsEmbedMessageLong(event.getChannelIdLong());
+        Long detailsEmbedMessageID = ThreadManagementTracker.getThreadData(event.getChannelIdLong(), ThreadManagementTracker.DETAILS_EMBED);
         Message detailsEmbedMessage;
         if (detailsEmbedMessageID == null) {
             String s = "Couldn't find the embedMessageID for " + event.getChannelIdLong();
@@ -670,7 +668,7 @@ public class CharacterCreation {
         }
         updateDetailsEmbed(character, detailsEmbedMessage);
 
-        Long buttonsEmbedMessageID = CharacterCreationThreadButtonsEmbedTracker.getButtonsEmbedMessageLong(event.getChannelIdLong());
+        Long buttonsEmbedMessageID = ThreadManagementTracker.getThreadData(event.getChannelIdLong(), ThreadManagementTracker.BUTTONS_EMBED);
         Message buttonsEmbedMessage;
         if (buttonsEmbedMessageID == null) {
             String s = "Couldn't find the embedMessageID for " + event.getChannelIdLong();

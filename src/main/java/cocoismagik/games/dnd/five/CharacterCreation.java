@@ -1,4 +1,4 @@
-package cocoismagik.games;
+package cocoismagik.games.dnd.five;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -32,7 +32,7 @@ import net.dv8tion.jda.api.requests.restaction.MessageEditAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.tika.Tika;
 
-public class DND5eCharacterCreation {
+public class CharacterCreation {
 
     private static void makeButtonGreen(Message message, TTRPGChar character){
         ActionRow buttonRow1;

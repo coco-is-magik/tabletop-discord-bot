@@ -10,9 +10,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import cocoismagik.commands.MessagePrefixCommandListener;
-import cocoismagik.commands.SlashCommandListener;
-import cocoismagik.interactables.ComponentInteractionListener;
+
+import cocoismagik.listeners.ComponentInteractionListener;
+import cocoismagik.listeners.MessagePrefixCommandListener;
+import cocoismagik.listeners.SlashCommandListener;
 import cocoismagik.main.DataOutputter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;

@@ -1,4 +1,4 @@
-package cocoismagik.commands;
+package cocoismagik.listeners;
 
 import javax.annotation.Nonnull;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -16,10 +16,10 @@ public class SlashCommandListener extends ListenerAdapter {
     public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event) {
         switch(event.getName()) {
             case "ping":
-                cocoismagik.commands.Ping.commandLogic(event);
+                cocoismagik.commands.slash.global.Ping.commandLogic(event);
                 break;
             case "testcommanddefault":
-                cocoismagik.commands.TestCommandDefault.commandLogic(event);
+                cocoismagik.commands.slash.test.TestCommandDefault.commandLogic(event);
                 break;
             default:
                 event.reply("Unrecognized command: " + event.getName()).queue();

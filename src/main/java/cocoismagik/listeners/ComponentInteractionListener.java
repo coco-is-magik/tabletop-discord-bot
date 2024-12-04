@@ -1,4 +1,4 @@
-package cocoismagik.interactables;
+package cocoismagik.listeners;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,6 +7,8 @@ import cocoismagik.datastructures.PlayerCharacters;
 import cocoismagik.datastructures.TTRPGChar;
 import cocoismagik.datastructures.ThreadManagementTracker;
 import cocoismagik.games.dnd.five.CharacterCreation;
+import cocoismagik.interactables.EmbedRetriever;
+import cocoismagik.interactables.EmbedWrapper;
 import cocoismagik.main.DataOutputter;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;

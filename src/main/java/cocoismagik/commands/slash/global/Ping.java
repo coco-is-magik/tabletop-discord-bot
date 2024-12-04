@@ -1,4 +1,4 @@
-package cocoismagik.commands;
+package cocoismagik.commands.slash.global;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;

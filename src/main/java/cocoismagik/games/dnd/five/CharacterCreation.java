@@ -37,7 +37,8 @@ public class CharacterCreation {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Unnamed Character");
         embedBuilder.setDescription("As you make choices, this will get updated!");
-        thread.sendMessageEmbeds(embedBuilder.build()).queue();
+        Message message = thread.sendMessageEmbeds(embedBuilder.build()).complete();
+        ThreadManagementTracker.addThreadData(thread.getIdLong(), ThreadManagementTracker.DETAILS_EMBED, message.getIdLong());
     }
 
     private static void sendDetailsButtonsEmbed(ThreadChannel thread) {
@@ -63,10 +64,10 @@ public class CharacterCreation {
         +"image, you'll need to provide that link yourself still.");
 
         MessageCreateAction action = thread.sendMessageEmbeds(embedBuilder.build());
-        action = action.setActionRow(buttonRow1.getComponents());
-        action = action.setActionRow(buttonRow2.getComponents());
-        action.queue();
+        action = action.setComponents(buttonRow1, buttonRow2);
+        Message message = action.complete();
         
+        ThreadManagementTracker.addThreadData(thread.getIdLong(), ThreadManagementTracker.BUTTONS_EMBED, message.getIdLong());
     }
 
     private static void sendSexAlignmentBackgroundEmbed(ThreadChannel thread) {
@@ -117,9 +118,7 @@ public class CharacterCreation {
         embedBuilder.setDescription("You will be prompted for further details after you make selections.");
 
         MessageCreateAction action = thread.sendMessageEmbeds(embedBuilder.build());
-        action = action.setActionRow(sexSelectMenu.getComponents());
-        action = action.setActionRow(alignmentSelectMenu.getComponents());
-        action = action.setActionRow(backgroundSelectMenu.getComponents());
+        action = action.setComponents(sexSelectMenu, alignmentSelectMenu, backgroundSelectMenu);
         action.queue();
     }
 
@@ -177,9 +176,7 @@ public class CharacterCreation {
         embedBuilder.setDescription("You will be prompted for further details after you make selections.");
 
         MessageCreateAction action = thread.sendMessageEmbeds(embedBuilder.build());
-        action = action.setActionRow(raceSelectMenu.getComponents());
-        action = action.setActionRow(classSelectMenu.getComponents());
-        action = action.setActionRow(attributeSelectMenu.getComponents());
+        action = action.setComponents(raceSelectMenu, classSelectMenu, attributeSelectMenu);
         action.queue();
     }
 

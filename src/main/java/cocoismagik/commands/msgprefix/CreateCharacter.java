@@ -1,11 +1,12 @@
 package cocoismagik.commands.msgprefix;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cocoismagik.datastructures.ThreadManagementTracker;
-import cocoismagik.interactables.EmbedRetriever;
 import cocoismagik.interactables.EmbedWrapper;
 import cocoismagik.main.DataOutputter;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -15,6 +16,32 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 
 public class CreateCharacter {
+
+    /**
+     * Retrieves the initial embeds for character creation, including the game selection dropdown.
+     * 
+     * @return a list of EmbedWrapper instances
+     */
+    public static List<EmbedWrapper> getCharacterCreationInitialEmbeds() {
+        List<EmbedWrapper> embedList = new ArrayList<>();
+
+        EmbedBuilder gameSelectionEmbed = new EmbedBuilder();
+        gameSelectionEmbed.setTitle("Choose Game");
+        gameSelectionEmbed.setDescription("Select a game from the dropdown below.");
+
+        ActionRow selectMenu = ActionRow.of(
+                net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu.create("game-selection")
+                        .setPlaceholder("Select game")
+                        .addOption("D&D 5th Edition", "dnd5e")
+                        .build()
+        );
+
+        // Create an EmbedWrapper instance and add it to the list
+        embedList.add(new EmbedWrapper(gameSelectionEmbed, List.of(selectMenu)));
+
+        return embedList;
+    }
+
     public static void commandLogic(MessageReceivedEvent event){
         Message message = event.getMessage();
         if (event.isFromType(ChannelType.TEXT)) {
@@ -33,7 +60,7 @@ public class CreateCharacter {
                         // Send an initial message in the thread
                         thread.sendMessage("This is a private thread for character creation.").queue();
 
-                        List<EmbedWrapper> embedWrappers = EmbedRetriever.getCharacterCreationInitialEmbeds();
+                        List<EmbedWrapper> embedWrappers = getCharacterCreationInitialEmbeds();
 
                         for (EmbedWrapper wrapper : embedWrappers) {
                             MessageCreateAction messageAction = thread.sendMessageEmbeds(wrapper.getEmbedBuilder().build());

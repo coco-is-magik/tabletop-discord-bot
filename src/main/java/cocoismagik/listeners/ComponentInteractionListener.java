@@ -3,12 +3,8 @@ package cocoismagik.listeners;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
-import cocoismagik.datastructures.PlayerCharacters;
-import cocoismagik.datastructures.TTRPGChar;
 import cocoismagik.datastructures.ThreadManagementTracker;
 import cocoismagik.games.dnd.five.CharacterCreation;
-import cocoismagik.interactables.EmbedRetriever;
-import cocoismagik.interactables.EmbedWrapper;
 import cocoismagik.main.DataOutputter;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -19,9 +15,7 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
-import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 
 public class ComponentInteractionListener extends ListenerAdapter {
 
@@ -177,38 +171,7 @@ public class ComponentInteractionListener extends ListenerAdapter {
 
         switch (selectedOption) {
             case "dnd5e":
-                // Create character
-                PlayerCharacters pcs = PlayerCharacters.getInstance();
-                Long playerID = event.getUser().getIdLong();
-                Long threadID = event.getChannel().getIdLong();
-                pcs.addCharacter(playerID, new TTRPGChar(playerID, threadID));
-
-                // Wait for complete to make sure the character exists before allowing interactions with it
-                event.getHook().sendMessage("Selected: " + selectedOption).complete();
-
-                List<EmbedWrapper> embedWrappers = EmbedRetriever.getDnd5eCreationEmbeds();
-
-                for (int i = 0; i < embedWrappers.size(); i++) {
-                    EmbedWrapper wrapper = embedWrappers.get(i);
-
-                    MessageCreateAction messageAction = channel.sendMessageEmbeds(wrapper.getEmbedBuilder().build());
-
-                    // Add action rows (components) if available
-                    for (ActionRow actionRow : wrapper.getComponents()) {
-                        messageAction = messageAction.addActionRow(actionRow.getComponents());
-                    }
-
-                    // Queue the message to send it
-                    Message message = messageAction.complete();
-                    Long messageID = message.getIdLong();
-
-                    if (i == 0) {
-                        ThreadManagementTracker.addThreadData(threadID, ThreadManagementTracker.DETAILS_EMBED, messageID);
-                    } else if (i == 1) {
-                        ThreadManagementTracker.addThreadData(threadID, ThreadManagementTracker.BUTTONS_EMBED, messageID);
-                    }
-                }
-
+                CharacterCreation.initialThreadSetup(event);
                 gameName = "D&D5E";
                 break;
             default:
@@ -220,6 +183,8 @@ public class ComponentInteractionListener extends ListenerAdapter {
         if (channel instanceof ThreadChannel) {
             // Rename the private thread
             ((ThreadChannel) channel).getManager().setName(gameName+" "+charName+" Character Creation").queue();
+        } else {
+            DataOutputter.logMessage("Channel is not a thread", DataOutputter.WARNING);
         }
     }
 

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import cocoismagik.datastructures.ThreadManagementTracker;
+import cocoismagik.interactables.EmbedRetriever;
+import cocoismagik.interactables.EmbedWrapper;
 import cocoismagik.datastructures.PlayerCharacters;
 import cocoismagik.datastructures.TTRPGChar;
 import cocoismagik.main.DataOutputter;
@@ -31,6 +33,40 @@ import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.tika.Tika;
 
 public class CharacterCreation {
+
+    public static void initialThreadSetup(StringSelectInteractionEvent event){
+        // Need to ensure that the character exists and is associated with the player for later embeds to function
+        PlayerCharacters pcs = PlayerCharacters.getInstance();
+        Long playerID = event.getUser().getIdLong();
+        Long threadID = event.getChannel().getIdLong();
+        pcs.addCharacter(playerID, new TTRPGChar(playerID, threadID));
+
+        // Wait for complete to make sure the character exists before allowing interactions with it
+        event.getHook().sendMessage("Selected: " + event.getValues().get(0)).complete();
+
+        List<EmbedWrapper> embedWrappers = EmbedRetriever.getDnd5eCreationEmbeds();
+
+        for (int i = 0; i < embedWrappers.size(); i++) {
+            EmbedWrapper wrapper = embedWrappers.get(i);
+
+            MessageCreateAction messageAction = event.getChannel().sendMessageEmbeds(wrapper.getEmbedBuilder().build());
+
+            // Add action rows (components) if available
+            for (ActionRow actionRow : wrapper.getComponents()) {
+                messageAction = messageAction.addActionRow(actionRow.getComponents());
+            }
+
+            // Queue the message to send it
+            Message message = messageAction.complete();
+            Long messageID = message.getIdLong();
+
+            if (i == 0) {
+                ThreadManagementTracker.addThreadData(threadID, ThreadManagementTracker.DETAILS_EMBED, messageID);
+            } else if (i == 1) {
+                ThreadManagementTracker.addThreadData(threadID, ThreadManagementTracker.BUTTONS_EMBED, messageID);
+            }
+        }
+    }
 
     private static void makeButtonGreen(Message message, TTRPGChar character){
         ActionRow buttonRow1;

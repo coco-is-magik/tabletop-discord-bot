@@ -14,7 +14,6 @@ public class EmbedWrapper {
         this.components = components;
     }
 
-    
     /**
      * Gets the embed builder of the EmbedWrapper object.
      * 
@@ -24,7 +23,6 @@ public class EmbedWrapper {
         return embedBuilder;
     }
 
-    
     /**
      * Gets the list of components associated with the EmbedWrapper object.
      * 
@@ -34,7 +32,6 @@ public class EmbedWrapper {
         return components;
     }
 
-    
     /**
      * Creates an EmbedWrapper containing an embed for character race selection and
      * an action row containing a string select menu with placeholder options.

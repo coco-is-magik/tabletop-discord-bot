@@ -33,6 +33,13 @@ import org.apache.tika.Tika;
 
 public class CharacterCreation {
 
+    public static final String MENU_SEX_SELECT = "sex";
+    public static final String MENU_ALIGNMENT_SELECT = "alignment";
+    public static final String MENU_BACKGROUND_SELECT = "background";
+    public static final String MENU_CLASS_SELECT = "class";
+    public static final String MENU_RACE_SELECT = "race";
+    public static final String MENU_ATTRIBUTE_METHOD_SELECT = "attribute_method";
+
     private static void sendCharacterDetailsEmbed(ThreadChannel thread) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Unnamed Character");
@@ -705,8 +712,8 @@ public class CharacterCreation {
      * @param event The StringSelectInteractionEvent.
      * @param detailName The name of the detail that was selected.
      */
-    private static void handleAnyMenu(StringSelectInteractionEvent event, String detailName){
-        event.getHook().sendMessage("You choose: " + event.getValues().get(0) + "!").queue();
+    public static void handleAnyMenu(StringSelectInteractionEvent event, String detailName){
+        event.getHook().sendMessage("You choose: " + event.getValues().get(0) + "!").setEphemeral(true).queue();
 
         Long playerID = event.getUser().getIdLong();
         Long threadID = event.getChannel().getIdLong();
@@ -723,72 +730,6 @@ public class CharacterCreation {
             detailsEmbedMessage = event.getChannel().asThreadChannel().retrieveMessageById(detailsEmbedMessageID).complete();
         }
         updateDetailsEmbed(character, detailsEmbedMessage);
-    }
-
-    /**
-     * Handles the logic for string select interactions where the select menu ID is
-     * "sex-selection". This method is a wrapper around {@link #handleAnyMenu(StringSelectInteractionEvent, String)}
-     * and passes the detail name as "sex".
-     * 
-     * @param event The string select interaction event.
-     */
-    public static void handleSexSelectionMenu(StringSelectInteractionEvent event) {
-        handleAnyMenu(event, "sex");
-    }
-
-    /**
-     * Handles the logic for string select interactions where the select menu ID is
-     * "alignment-selection". This method is a wrapper around {@link #handleAnyMenu(StringSelectInteractionEvent, String)}
-     * and passes the detail name as "alignment".
-     * 
-     * @param event The string select interaction event.
-     */
-    public static void handleAlignmentSelectionMenu(StringSelectInteractionEvent event) {
-        handleAnyMenu(event, "alignment");
-    }
-
-    /**
-     * Handles the logic for string select interactions where the select menu ID is
-     * "race-selection". This method is a wrapper around {@link #handleAnyMenu(StringSelectInteractionEvent, String)}
-     * and passes the detail name as "race".
-     * 
-     * @param event The string select interaction event.
-     */
-    public static void handleRaceSelectionMenu(StringSelectInteractionEvent event) {
-        handleAnyMenu(event, "race");
-    }
-
-    /**
-     * Handles the logic for string select interactions where the select menu ID is
-     * "class-selection". This method is a wrapper around {@link #handleAnyMenu(StringSelectInteractionEvent, String)}
-     * and passes the detail name as "class".
-     * 
-     * @param event The string select interaction event.
-     */
-    public static void handleClassSelectionMenu(StringSelectInteractionEvent event) {
-        handleAnyMenu(event, "class");
-    }
-
-    /**
-     * Handles the logic for string select interactions where the select menu ID is
-     * "background-selection". This method is a wrapper around {@link #handleAnyMenu(StringSelectInteractionEvent, String)}
-     * and passes the detail name as "background".
-     * 
-     * @param event The string select interaction event.
-     */
-    public static void handleBackgroundSelectionMenu(StringSelectInteractionEvent event) {
-        handleAnyMenu(event, "background");
-    }
-
-    /**
-     * Handles the logic for string select interactions where the select menu ID is
-     * "attribute-selection". This method is a wrapper around {@link #handleAnyMenu(StringSelectInteractionEvent, String)}
-     * and passes the detail name as "attribute_method".
-     * 
-     * @param event The string select interaction event.
-     */
-    public static void handleAttributeMethodSelectionMenu(StringSelectInteractionEvent event) {
-        handleAnyMenu(event, "attribute_method");
     }
 
     /**

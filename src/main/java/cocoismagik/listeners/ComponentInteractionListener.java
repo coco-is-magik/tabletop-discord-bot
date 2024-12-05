@@ -212,32 +212,32 @@ public class ComponentInteractionListener extends ListenerAdapter {
                 sel = "game";
                 break;
             case "sex-selection":
-                CharacterCreation.handleSexSelectionMenu(event);
+                CharacterCreation.handleAnyMenu(event, CharacterCreation.MENU_SEX_SELECT);
                 game = "dnd5e";
                 sel = "sex";
                 break;
             case "alignment-selection":
-                CharacterCreation.handleAlignmentSelectionMenu(event);
+                CharacterCreation.handleAnyMenu(event, CharacterCreation.MENU_ALIGNMENT_SELECT);
                 game = "dnd5e";
                 sel = "alignment";
                 break;
             case "race-selection":
-                CharacterCreation.handleRaceSelectionMenu(event);
+                CharacterCreation.handleAnyMenu(event, CharacterCreation.MENU_RACE_SELECT);
                 game = "dnd5e";
                 sel = "race";
                 break;
             case "class-selection":
-                CharacterCreation.handleClassSelectionMenu(event);
+                CharacterCreation.handleAnyMenu(event, CharacterCreation.MENU_CLASS_SELECT);
                 game = "dnd5e";
                 sel = "class";
                 break;
             case "background-selection":
-                CharacterCreation.handleBackgroundSelectionMenu(event);
+                CharacterCreation.handleAnyMenu(event, CharacterCreation.MENU_BACKGROUND_SELECT);
                 game = "dnd5e";
                 sel = "background";
                 break;
             case "attribute-selection":
-                CharacterCreation.handleAttributeMethodSelectionMenu(event);
+                CharacterCreation.handleAnyMenu(event, CharacterCreation.MENU_ATTRIBUTE_METHOD_SELECT);
                 game = "dnd5e";
                 sel = "attribute method";
                 break;

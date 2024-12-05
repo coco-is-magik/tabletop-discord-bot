@@ -40,6 +40,15 @@ public class CharacterCreation {
     public static final String MENU_RACE_SELECT = "race";
     public static final String MENU_ATTRIBUTE_METHOD_SELECT = "attribute_method";
 
+    public static final String TEXT_INPUT_NAME = "dnd5e-name";
+    public static final String TEXT_INPUT_URL = "dnd5e-url";
+    public static final String TEXT_INPUT_DESCRIPTION = "dnd5e-desc";
+    public static final String TEXT_INPUT_DETAIL_PERSONALITY = "dnd5e-detail-personality";
+    public static final String TEXT_INPUT_DETAIL_IDEALS = "dnd5e-detail-ideals";
+    public static final String TEXT_INPUT_DETAIL_BONDS = "dnd5e-detail-bonds";
+    public static final String TEXT_INPUT_DETAIL_FLAWS = "dnd5e-detail-flaws";
+    public static final String TEXT_INPUT_BACKSTORY = "dnd5e-backstory";
+
     private static void sendCharacterDetailsEmbed(ThreadChannel thread) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Unnamed Character");
@@ -264,7 +273,7 @@ public class CharacterCreation {
      * @param event The event that triggered this method.
      */
     public static void handleCharacterNameAction(ButtonInteractionEvent event){
-        TextInput nameInput = TextInput.create("dnd5e-name", "Character Name", TextInputStyle.SHORT)
+        TextInput nameInput = TextInput.create(TEXT_INPUT_NAME, "Character Name", TextInputStyle.SHORT)
             .setRequired(true)
             .setRequiredRange(1, 100)
             .setPlaceholder("Name of the Character")
@@ -294,7 +303,7 @@ public class CharacterCreation {
      * @param event The event that triggered this method.
      */
     public static void handleCharacterImageDisplay(ButtonInteractionEvent event){
-        TextInput urlInput = TextInput.create("dnd5e-url", "Character Image", TextInputStyle.SHORT)
+        TextInput urlInput = TextInput.create(TEXT_INPUT_URL, "Character Image", TextInputStyle.SHORT)
             .setRequired(true)
             .setMinLength(1)
             .setPlaceholder("URL for character image")
@@ -324,7 +333,7 @@ public class CharacterCreation {
      * @param event The event that triggered this method.
      */
     public static void handleCharacterDescription(ButtonInteractionEvent event){
-        TextInput urlInput = TextInput.create("dnd5e-desc", "Character Description", TextInputStyle.PARAGRAPH)
+        TextInput urlInput = TextInput.create(TEXT_INPUT_DESCRIPTION, "Character Description", TextInputStyle.PARAGRAPH)
             .setRequired(true)
             .setMinLength(1)
             .setPlaceholder("Physical description of character")
@@ -354,25 +363,25 @@ public class CharacterCreation {
      * @param event The event that triggered this method.
      */
     public static void handleCharacterDetails(ButtonInteractionEvent event){
-        TextInput personalityInput = TextInput.create("dnd5e-detail-personality", "Character Personality Traits", TextInputStyle.PARAGRAPH)
+        TextInput personalityInput = TextInput.create(TEXT_INPUT_DETAIL_PERSONALITY, "Character Personality Traits", TextInputStyle.PARAGRAPH)
             .setRequired(true)
             .setMinLength(1)
             .setPlaceholder("Personality traits")
             .build();
         
-        TextInput idealsInput = TextInput.create("dnd5e-detail-ideals", "Character Ideals", TextInputStyle.PARAGRAPH)
+        TextInput idealsInput = TextInput.create(TEXT_INPUT_DETAIL_IDEALS, "Character Ideals", TextInputStyle.PARAGRAPH)
             .setRequired(true)
             .setMinLength(1)
             .setPlaceholder("Character ideals")
             .build();
         
-        TextInput bondsInput = TextInput.create("dnd5e-detail-bonds", "Character Bonds", TextInputStyle.PARAGRAPH)
+        TextInput bondsInput = TextInput.create(TEXT_INPUT_DETAIL_BONDS, "Character Bonds", TextInputStyle.PARAGRAPH)
             .setRequired(true)
             .setMinLength(1)
             .setPlaceholder("Character bonds")
             .build();
         
-        TextInput flawsInput = TextInput.create("dnd5e-detail-flaws", "Character Personality Flaws", TextInputStyle.PARAGRAPH)
+        TextInput flawsInput = TextInput.create(TEXT_INPUT_DETAIL_FLAWS, "Character Personality Flaws", TextInputStyle.PARAGRAPH)
             .setRequired(true)
             .setMinLength(1)
             .setPlaceholder("Personality flaws")
@@ -402,7 +411,7 @@ public class CharacterCreation {
      * @param event The event that triggered this method.
      */
     public static void handleCharacterBackstory(ButtonInteractionEvent event){
-        TextInput backstoryInput = TextInput.create("dnd5e-backstory", "Character Backstory", TextInputStyle.PARAGRAPH)
+        TextInput backstoryInput = TextInput.create(TEXT_INPUT_BACKSTORY, "Character Backstory", TextInputStyle.PARAGRAPH)
             .setRequired(true)
             .setMinLength(1)
             .setPlaceholder("Character backstory")
@@ -742,131 +751,66 @@ public class CharacterCreation {
      * @param event The modal interaction event containing the user's input.
      * @param value The identifier for the modal input value to be processed.
      */
-    private static void handleAnyModalInput(ModalInteractionEvent event, String value) {
-        //FIXME: image does not update right
-        ModalMapping nameMapping = event.getValue(value);
+    public static void handleAnyModalInput(ModalInteractionEvent event, String[] values) {
+        for (String value : values) {
+            ModalMapping nameMapping = event.getValue(value);
 
-        String prefix = "dnd5e-";
-        String normValue = value.substring(prefix.length());
-        
-
-        if (nameMapping == null) {
-            event.getHook().sendMessage("Your input is invalid").queue();
-            DataOutputter.logMessage("Null input for " + value + " modal", DataOutputter.WARNING);
-            return;
-        }
-
-        event.getHook().sendMessage("You submitted "+nameMapping.getAsString()+" for "+normValue).complete();
-
-        Long playerID = event.getUser().getIdLong();
-        Long threadID = event.getChannel().getIdLong();
-
-        TTRPGChar character = addDetailsToCharacter(normValue, nameMapping.getAsString(), playerID, threadID);
-        
-        Long detailsEmbedMessageID = ThreadManagementTracker.getThreadData(event.getChannelIdLong(), ThreadManagementTracker.DETAILS_EMBED);
-        Message detailsEmbedMessage;
-        if (detailsEmbedMessageID == null) {
-            String s = "Couldn't find the embedMessageID for " + event.getChannelIdLong();
-            DataOutputter.logMessage(s, DataOutputter.WARNING);
-            detailsEmbedMessage = missingDetailsEmbedRecover(event.getChannel().asThreadChannel()); //FIXME: check if we are in a thread
-        } else {
-            detailsEmbedMessage = event.getChannel().asThreadChannel().retrieveMessageById(detailsEmbedMessageID).complete();
-        }
-        updateDetailsEmbed(character, detailsEmbedMessage);
-
-        Long buttonsEmbedMessageID = ThreadManagementTracker.getThreadData(event.getChannelIdLong(), ThreadManagementTracker.BUTTONS_EMBED);
-        Message buttonsEmbedMessage;
-        if (buttonsEmbedMessageID == null) {
-            String s = "Couldn't find the embedMessageID for " + event.getChannelIdLong();
-            DataOutputter.logMessage(s, DataOutputter.WARNING);
-            //FIXME: create recover method
-            return;
-        } else {
-            buttonsEmbedMessage = event.getChannel().asThreadChannel().retrieveMessageById(buttonsEmbedMessageID).complete();
-        }
-        makeButtonGreen(buttonsEmbedMessage, character);
-    }
-
-    /**
-     * Handles the modal interaction for entering a character's name.
-     * This method retrieves the input from the modal and processes it
-     * accordingly.
-     * 
-     * @param event The modal interaction event.
-     */
-    public static void handleCharacterName(ModalInteractionEvent event) {
-        handleAnyModalInput(event, "dnd5e-name");
-    }
-
-    /**
-     * Handles the modal interaction for entering a character's image URL.
-     * This method retrieves the input from the modal, validates it to ensure
-     * it is a safe URL that points to an image, and processes it accordingly.
-     * 
-     * @param event The modal interaction event.
-     */
-    public static void handleCharacterImage(ModalInteractionEvent event) {
-        //validate URL first
-        ModalMapping nameMapping = event.getValue("dnd5e-url");
-        if (nameMapping == null) {
-            event.getHook().sendMessage("Your input is invalid").queue();
-            DataOutputter.logMessage("Null input for dnd5e-url modal", DataOutputter.WARNING);
-            return;
-        }
-        String url = nameMapping.getAsString();
-        try {
-            boolean isSafeUrl = URLChecker.isSafeUrl(url, new String[]{"jpg", "jpeg", "png", "gif", "webp"});
-            if (isSafeUrl) {
-                handleAnyModalInput(event, "dnd5e-url");
-            } else {
-                throw new IllegalArgumentException("Unsafe URL detected");
+            String prefix = "dnd5e-";
+            String normValue = value.substring(prefix.length());
+            
+            if (nameMapping == null) {
+                event.getHook().sendMessage("Your input is invalid").queue();
+                DataOutputter.logMessage("Null input for " + value + " modal", DataOutputter.WARNING);
+                continue;
             }
-        } catch (IllegalArgumentException e) {
-            event.getHook().sendMessage("URL rejected because: "+e.getMessage()).queue();
-            DataOutputter.logMessage("Error parsing URL: "+e.getMessage(), DataOutputter.ERROR);
-            return;
-        } catch (Exception e) {
-            event.getHook().sendMessage("Something went wrong!").queue();
-            DataOutputter.logMessage("Unexpected error handling URL input for DND character creation flow: "+ e.getMessage(), DataOutputter.WARNING);
-            return;
+
+            if (nameMapping.getAsString().equals(TEXT_INPUT_URL)) {
+                String url = nameMapping.getAsString();
+                try {
+                    boolean isSafeUrl = URLChecker.isSafeUrl(url, new String[]{"jpg", "jpeg", "png", "gif", "webp"});
+                    if (!isSafeUrl) {
+                        throw new IllegalArgumentException("Unsafe URL detected");
+                    }
+                } catch (IllegalArgumentException e) {
+                    event.getHook().sendMessage("URL rejected because: "+e.getMessage()).queue();
+                    DataOutputter.logMessage("Error parsing URL: "+e.getMessage(), DataOutputter.ERROR);
+                    continue;
+                } catch (Exception e) {
+                    event.getHook().sendMessage("Something went wrong!").queue();
+                    DataOutputter.logMessage("Unexpected error handling URL input for DND character creation flow: "+ e.getMessage(), DataOutputter.WARNING);
+                    continue;
+                }
+            }
+    
+            event.getHook().sendMessage("You submitted "+nameMapping.getAsString()+" for "+normValue).complete();
+    
+            Long playerID = event.getUser().getIdLong();
+            Long threadID = event.getChannel().getIdLong();
+    
+            TTRPGChar character = addDetailsToCharacter(normValue, nameMapping.getAsString(), playerID, threadID);
+            
+            Long detailsEmbedMessageID = ThreadManagementTracker.getThreadData(event.getChannelIdLong(), ThreadManagementTracker.DETAILS_EMBED);
+            Message detailsEmbedMessage;
+            if (detailsEmbedMessageID == null) {
+                String s = "Couldn't find the embedMessageID for " + event.getChannelIdLong();
+                DataOutputter.logMessage(s, DataOutputter.WARNING);
+                detailsEmbedMessage = missingDetailsEmbedRecover(event.getChannel().asThreadChannel()); //FIXME: check if we are in a thread
+            } else {
+                detailsEmbedMessage = event.getChannel().asThreadChannel().retrieveMessageById(detailsEmbedMessageID).complete();
+            }
+            updateDetailsEmbed(character, detailsEmbedMessage);
+    
+            Long buttonsEmbedMessageID = ThreadManagementTracker.getThreadData(event.getChannelIdLong(), ThreadManagementTracker.BUTTONS_EMBED);
+            Message buttonsEmbedMessage;
+            if (buttonsEmbedMessageID == null) {
+                String s = "Couldn't find the embedMessageID for " + event.getChannelIdLong();
+                DataOutputter.logMessage(s, DataOutputter.WARNING);
+                //FIXME: create recover method
+                continue;
+            } else {
+                buttonsEmbedMessage = event.getChannel().asThreadChannel().retrieveMessageById(buttonsEmbedMessageID).complete();
+            }
+            makeButtonGreen(buttonsEmbedMessage, character);
         }
     }
-
-    /**
-     * Handles the modal interaction for entering a character's physical description.
-     * This method retrieves the input from the modal and processes it accordingly.
-     * 
-     * @param event The modal interaction event.
-     */
-    public static void handleCharacterDescription(ModalInteractionEvent event) {
-        handleAnyModalInput(event, "dnd5e-desc");
-    }
-
-    /**
-     * Handles the modal interaction for entering a character's personality traits, ideals, bonds, and personality flaws.
-     * This method retrieves the input from the modal and updates the character's details accordingly. It then updates the 
-     * associated embed message with the new information.
-     * 
-     * @param event The modal interaction event containing the character's personality traits, ideals, bonds, and personality flaws.
-     */
-    public static void handleCharacterDetail(ModalInteractionEvent event) {
-        handleAnyModalInput(event, "dnd5e-detail-personality");
-        handleAnyModalInput(event, "dnd5e-detail-ideals");
-        handleAnyModalInput(event, "dnd5e-detail-bonds");
-        handleAnyModalInput(event, "dnd5e-detail-flaws");
-    }
-
-    /**
-     * Handles the modal interaction for entering a character's backstory.
-     * This method retrieves the backstory input from the modal and updates the 
-     * character's details accordingly. It then updates the associated embed 
-     * message with the new backstory information.
-     * 
-     * @param event The modal interaction event containing the backstory input.
-     */
-    public static void handleCharacterBackstory(ModalInteractionEvent event) {
-        handleAnyModalInput(event, "dnd5e-backstory");
-    }
-
-
 }

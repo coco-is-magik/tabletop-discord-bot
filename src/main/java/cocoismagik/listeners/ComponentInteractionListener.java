@@ -271,27 +271,32 @@ public class ComponentInteractionListener extends ListenerAdapter {
 
         switch(modalId) {
             case "dnd5e-name-modal":
-                CharacterCreation.handleCharacterName(event);
+                CharacterCreation.handleAnyModalInput(event, new String[]{CharacterCreation.TEXT_INPUT_NAME});
                 game = "dnd5e";
                 sel = "name";
                 break;
             case "dnd5e-image-modal":
-                CharacterCreation.handleCharacterImage(event);
+                CharacterCreation.handleAnyModalInput(event, new String[]{CharacterCreation.TEXT_INPUT_URL});
                 game = "dnd5e";
                 sel = "image";
                 break;
             case "dnd5e-desc-modal":
-                CharacterCreation.handleCharacterDescription(event);
+                CharacterCreation.handleAnyModalInput(event, new String[]{CharacterCreation.TEXT_INPUT_DESCRIPTION});
                 game = "dnd5e";
                 sel = "description";
                 break;
             case "dnd5e-detail-modal":
-                CharacterCreation.handleCharacterDetail(event);
+                CharacterCreation.handleAnyModalInput(event, new String[]{
+                    CharacterCreation.TEXT_INPUT_DETAIL_PERSONALITY,
+                    CharacterCreation.TEXT_INPUT_DETAIL_IDEALS,
+                    CharacterCreation.TEXT_INPUT_DETAIL_BONDS,
+                    CharacterCreation.TEXT_INPUT_DETAIL_FLAWS
+                });
                 game = "dnd5e";
                 sel = "details";
                 break;
             case "dnd5e-backstory-modal":
-                CharacterCreation.handleCharacterBackstory(event);
+                CharacterCreation.handleAnyModalInput(event, new String[]{CharacterCreation.TEXT_INPUT_BACKSTORY});
                 game = "dnd5e";
                 sel = "backstory";
                 break;

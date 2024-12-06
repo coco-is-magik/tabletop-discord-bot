@@ -49,6 +49,12 @@ public class CharacterCreation {
     public static final String TEXT_INPUT_DETAIL_FLAWS = "dnd5e-detail-flaws";
     public static final String TEXT_INPUT_BACKSTORY = "dnd5e-backstory";
 
+    public static final String MODAL_NAME = "dnd5e-modal-name";
+    public static final String MODAL_URL = "dnd5e-modal-url";
+    public static final String MODAL_DESCRIPTION = "dnd5e-modal-desc";
+    public static final String MODAL_DETAIL = "dnd5e-detail-modal";
+    public static final String MODAL_BACKSTORY = "dnd5e-modal-backstory";
+
     private static void sendCharacterDetailsEmbed(ThreadChannel thread) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Unnamed Character");
@@ -261,186 +267,6 @@ public class CharacterCreation {
         messageEditAction.queue();
     }
 
-
-    /**
-     * Handles the button interaction for the button with the custom ID
-     * "character-name-action". This method creates a modal with a text input for
-     * the user to enter a name for their character. The method then sends this
-     * modal to the user.
-     * 
-     * This method will throw an error if the event has already been acknowledged.
-     * 
-     * @param event The event that triggered this method.
-     */
-    public static void handleCharacterNameAction(ButtonInteractionEvent event){
-        TextInput nameInput = TextInput.create(TEXT_INPUT_NAME, "Character Name", TextInputStyle.SHORT)
-            .setRequired(true)
-            .setRequiredRange(1, 100)
-            .setPlaceholder("Name of the Character")
-            .build();
-        
-        Modal modal = Modal.create("dnd5e-name-modal", "Character Name")
-            .addComponents(ActionRow.of(nameInput))
-            .build();
-
-        try{
-            event.replyModal(modal).complete();
-        }catch(Exception e){
-            event.getHook().sendMessage("There was an error processing the request.").setEphemeral(true).queue();
-            DataOutputter.logMessage("Attempted to send modal but the event was already acknowledged!", DataOutputter.ERROR);
-            return;
-        }
-    }
-
-    /**
-     * Handles the button interaction for the button with the custom ID
-     * "dnd5e-url". This method creates a modal with a text input for the user
-     * to enter a URL for their character's image. The method then sends this
-     * modal to the user.
-     * 
-     * This method will throw an error if the event has already been acknowledged.
-     *
-     * @param event The event that triggered this method.
-     */
-    public static void handleCharacterImageDisplay(ButtonInteractionEvent event){
-        TextInput urlInput = TextInput.create(TEXT_INPUT_URL, "Character Image", TextInputStyle.SHORT)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("URL for character image")
-            .build();
-        
-        Modal modal = Modal.create("dnd5e-image-modal", "Character Image")
-            .addComponents(ActionRow.of(urlInput))
-            .build();
-        
-        try{
-            event.replyModal(modal).complete();
-        }catch(Exception e){
-            event.getHook().sendMessage("There was an error processing the request.").setEphemeral(true).queue();
-            DataOutputter.logMessage("Attempted to send modal but the event was already acknowledged!", DataOutputter.ERROR);
-            return;
-        }
-    }
-
-    /**
-     * Handles the button interaction for the button with the custom ID
-     * "dnd5e-desc". This method creates a modal with a text input for the user
-     * to enter their character's physical description. The method then sends
-     * this modal to the user.
-     * 
-     * This method will throw an error if the event has already been acknowledged.
-     * 
-     * @param event The event that triggered this method.
-     */
-    public static void handleCharacterDescription(ButtonInteractionEvent event){
-        TextInput urlInput = TextInput.create(TEXT_INPUT_DESCRIPTION, "Character Description", TextInputStyle.PARAGRAPH)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("Physical description of character")
-            .build();
-        
-        Modal modal = Modal.create("dnd5e-desc-modal", "Character Description")
-            .addComponents(ActionRow.of(urlInput))
-            .build();
-
-        try{
-            event.replyModal(modal).complete();
-        }catch(Exception e){
-            event.getHook().sendMessage("There was an error processing the request.").setEphemeral(true).queue();
-            DataOutputter.logMessage("Attempted to send modal but the event was already acknowledged!", DataOutputter.ERROR);
-            return;
-        }
-    }
-
-    /**
-     * Handles the button interaction for the button with the custom ID
-     * "dnd5e-details". This method creates a modal with text inputs for the user
-     * to enter their character's personality traits, ideals, bonds, and flaws.
-     * The method then sends this modal to the user.
-     * 
-     * This method will throw an error if the event has already been acknowledged.
-     * 
-     * @param event The event that triggered this method.
-     */
-    public static void handleCharacterDetails(ButtonInteractionEvent event){
-        TextInput personalityInput = TextInput.create(TEXT_INPUT_DETAIL_PERSONALITY, "Character Personality Traits", TextInputStyle.PARAGRAPH)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("Personality traits")
-            .build();
-        
-        TextInput idealsInput = TextInput.create(TEXT_INPUT_DETAIL_IDEALS, "Character Ideals", TextInputStyle.PARAGRAPH)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("Character ideals")
-            .build();
-        
-        TextInput bondsInput = TextInput.create(TEXT_INPUT_DETAIL_BONDS, "Character Bonds", TextInputStyle.PARAGRAPH)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("Character bonds")
-            .build();
-        
-        TextInput flawsInput = TextInput.create(TEXT_INPUT_DETAIL_FLAWS, "Character Personality Flaws", TextInputStyle.PARAGRAPH)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("Personality flaws")
-            .build();
-        
-        Modal modal = Modal.create("dnd5e-detail-modal", "Character Description")
-            .addComponents(ActionRow.of(personalityInput), ActionRow.of(idealsInput), ActionRow.of(bondsInput), ActionRow.of(flawsInput))
-            .build();
-        
-        try{
-            event.replyModal(modal).complete();
-        }catch(Exception e){
-            event.getHook().sendMessage("There was an error processing the request.").setEphemeral(true).queue();
-            DataOutputter.logMessage("Attempted to send modal but the event was already acknowledged!", DataOutputter.ERROR);
-            return;
-        }
-    }
-
-    /**
-     * Handles the button interaction for the button with the custom ID
-     * "dnd5e-backstory". The method creates a modal with a text input for the
-     * user to enter their character's backstory. The method then sends this
-     * modal to the user.
-     * 
-     * This method will throw an error if the event has already been acknowledged.
-     * 
-     * @param event The event that triggered this method.
-     */
-    public static void handleCharacterBackstory(ButtonInteractionEvent event){
-        TextInput backstoryInput = TextInput.create(TEXT_INPUT_BACKSTORY, "Character Backstory", TextInputStyle.PARAGRAPH)
-            .setRequired(true)
-            .setMinLength(1)
-            .setPlaceholder("Character backstory")
-            .build();
-        
-        Modal modal = Modal.create("dnd5e-backstory-modal", "Character Description")
-            .addComponents(ActionRow.of(backstoryInput))
-            .build();
-
-        try{
-            event.replyModal(modal).complete();
-        }catch(Exception e){
-            event.getHook().sendMessage("There was an error processing the request.").setEphemeral(false).queue();
-            DataOutputter.logMessage("Attempted to send modal but the event was already acknowledged!", DataOutputter.ERROR);
-            return;
-        }
-    }
-
-    public static void handleCharacterRandomization(ButtonInteractionEvent event){
-        event.getHook().sendMessage("Not implemented yet").queue();
-
-        //TODO: implement randomization
-        // Choose a random name
-        // Choose a random physical description
-        // Choose a random backstory
-        // Choose random personality traits and flaws
-        // Choose random ideals and bonds
-    }
-
     private static Message missingDetailsEmbedRecover(ThreadChannel channel) {
         // Create a new Details Embed to replace the old one and track it properly
         EmbedBuilder characterDetailsEmbed = new EmbedBuilder();
@@ -648,26 +474,6 @@ public class CharacterCreation {
         String level = (levelObj == null) ? "1" : levelObj.toString();
         Object backgroundObj = character.getDetail("background");
         String background = (backgroundObj == null) ? "" : backgroundObj.toString();
-        Object attrObject = character.getDetail("attribute_method");
-        String attrMethod = (attrObject == null) ? "" : attrObject.toString();
-
-        String logBlock = "Character details in embed:\n" +
-            "Name: " + name + "\n" +
-            "Sex: " + sex + "\n" +
-            "Alignment: " + alig + "\n" +
-            "Image: " + imag + "\n" +
-            "Description: " + desc + "\n" +
-            "Personality traits: " + personality + "\n" +
-            "Ideals: " + ideals + "\n" +
-            "Bonds: " + bonds + "\n" +
-            "Flaws: " + flaws + "\n" +
-            "Backstory: " + backstory + "\n" +
-            "Race: " + race + "\n" +
-            "Class: " + gameClass + "\n" +
-            "Level: " + level + "\n" +
-            "Background: " + background + "\n" +
-            "Attribute Method: " + attrMethod + "\n";
-        DataOutputter.logMessage(logBlock, DataOutputter.INFO);
 
         String basicInfoString = "Level " + level + " " + gameClass + ", " + alig + ", " + sex + ", " + race + ", " + background;
 
@@ -680,7 +486,7 @@ public class CharacterCreation {
         embedBuilder.addField("Ideals", ideals, true);
         embedBuilder.addField("Bonds", bonds, true);
         embedBuilder.addField("Physical Description", desc, true);
-        embedBuilder.addField("backstory", background, false);
+        embedBuilder.addField("backstory", backstory, false);
 
         // Set the title to the character's name
         embedBuilder.setTitle(((name != "") ? name : "Unnamed Character")+"'s Details");
@@ -782,7 +588,7 @@ public class CharacterCreation {
                 }
             }
     
-            event.getHook().sendMessage("You submitted "+nameMapping.getAsString()+" for "+normValue).complete();
+            event.getHook().sendMessage("You submitted "+nameMapping.getAsString()+" for "+normValue).setEphemeral(true).complete();
     
             Long playerID = event.getUser().getIdLong();
             Long threadID = event.getChannel().getIdLong();
@@ -812,5 +618,47 @@ public class CharacterCreation {
             }
             makeButtonGreen(buttonsEmbedMessage, character);
         }
+    }
+
+    public static void handleAnyModalButton(ButtonInteractionEvent e, String mID, String[] ids, String[] l, TextInputStyle[] s, String[] p){
+        // List of text inputs to add
+        ArrayList<TextInput> inputs = new ArrayList<TextInput>(); 
+
+        for (int i = 0; i < ids.length; i++){
+            inputs.add(
+                TextInput.create(ids[i], l[i], s[i])
+                    .setRequired(true)
+                    .setMinLength(1)
+                    .setPlaceholder(p[i])
+                    .build()
+            );
+        }
+
+        // Ternary to check for the case where there is multiple inputs
+        Modal.Builder modalBuilder = Modal.create(mID, (l.length > 1) ? "Character Details" : l[0]);
+        for (TextInput input : inputs){
+            modalBuilder.addComponents(ActionRow.of(input));
+        }
+        Modal modal = modalBuilder.build();
+
+        // Send the modal
+        try{
+            e.replyModal(modal).complete();
+        }catch(Exception ee){
+            e.getHook().sendMessage("There was an error processing the request.").setEphemeral(true).queue();
+            DataOutputter.logMessage("Attempted to send modal but the event was already acknowledged!", DataOutputter.ERROR);
+            return;
+        }
+    }
+
+    public static void handleCharacterRandomization(ButtonInteractionEvent event){
+        event.getHook().sendMessage("Not implemented yet").queue();
+
+        //TODO: implement randomization
+        // Choose a random name
+        // Choose a random physical description
+        // Choose a random backstory
+        // Choose random personality traits and flaws
+        // Choose random ideals and bonds
     }
 }

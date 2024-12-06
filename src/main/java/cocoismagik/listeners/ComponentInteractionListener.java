@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteract
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 
 public class ComponentInteractionListener extends ListenerAdapter {
 
@@ -101,31 +102,85 @@ public class ComponentInteractionListener extends ListenerAdapter {
         switch (buttonId) {
             case "character-name-action":
                 // Handle character name action
-                CharacterCreation.handleCharacterNameAction(event);
+                CharacterCreation.handleAnyModalButton(
+                    event,
+                    CharacterCreation.MODAL_NAME,
+                    new String[]{CharacterCreation.TEXT_INPUT_NAME},
+                    new String[]{"Character Name"},
+                    new TextInputStyle[]{TextInputStyle.SHORT},
+                    new String[]{"Enter character name..."}
+                );
                 game = "dnd5e";
                 sel = "name";
                 break;
             case "character-image-display":
                 // Handle character image display action
-                CharacterCreation.handleCharacterImageDisplay(event);
+                CharacterCreation.handleAnyModalButton(
+                    event,
+                    CharacterCreation.MODAL_URL,
+                    new String[]{CharacterCreation.TEXT_INPUT_URL},
+                    new String[]{"Character Image URL"},
+                    new TextInputStyle[]{TextInputStyle.SHORT},
+                    new String[]{"Enter link to character image..."}
+                );
                 game = "dnd5e";
                 sel = "image";
                 break;
             case "character-description":
                 // Handle character description action
-                CharacterCreation.handleCharacterDescription(event);
+                CharacterCreation.handleAnyModalButton(
+                    event,
+                    CharacterCreation.MODAL_DESCRIPTION,
+                    new String[]{CharacterCreation.TEXT_INPUT_DESCRIPTION},
+                    new String[]{"Character Physical Description"},
+                    new TextInputStyle[]{TextInputStyle.PARAGRAPH},
+                    new String[]{"Enter character physical description..."}
+                );
                 game = "dnd5e";
                 sel = "description";
                 break;
             case "character-details":
                 // Handle character details action
-                CharacterCreation.handleCharacterDetails(event);
+                CharacterCreation.handleAnyModalButton(
+                    event,
+                    CharacterCreation.MODAL_DETAIL,
+                    new String[]{
+                        CharacterCreation.TEXT_INPUT_DETAIL_PERSONALITY,
+                        CharacterCreation.TEXT_INPUT_DETAIL_IDEALS,
+                        CharacterCreation.TEXT_INPUT_DETAIL_BONDS,
+                        CharacterCreation.TEXT_INPUT_DETAIL_FLAWS
+                    },
+                    new String[]{
+                        "Character Personality Traits",
+                        "Character Ideals",
+                        "Character Bonds",
+                        "Character Flaws"
+                    },
+                    new TextInputStyle[]{
+                        TextInputStyle.PARAGRAPH,
+                        TextInputStyle.PARAGRAPH,
+                        TextInputStyle.PARAGRAPH,
+                        TextInputStyle.PARAGRAPH},
+                    new String[]{
+                        "Enter character personality traits...",
+                        "Enter character ideals...",
+                        "Enter character bonds...",
+                        "Enter character flaws..."
+                    }
+                );
                 game = "dnd5e";
                 sel = "details";
                 break;
             case "character-backstory":
                 // Handle character backstory action
-                CharacterCreation.handleCharacterBackstory(event);
+                CharacterCreation.handleAnyModalButton(
+                    event,
+                    CharacterCreation.MODAL_BACKSTORY,
+                    new String[]{CharacterCreation.TEXT_INPUT_BACKSTORY},
+                    new String[]{"Character Backstory"},
+                    new TextInputStyle[]{TextInputStyle.PARAGRAPH},
+                    new String[]{"Enter backstory..."}
+                );
                 game = "dnd5e";
                 sel = "backstory";
                 break;
@@ -270,22 +325,22 @@ public class ComponentInteractionListener extends ListenerAdapter {
         String sel = "";
 
         switch(modalId) {
-            case "dnd5e-name-modal":
+            case CharacterCreation.MODAL_NAME:
                 CharacterCreation.handleAnyModalInput(event, new String[]{CharacterCreation.TEXT_INPUT_NAME});
                 game = "dnd5e";
                 sel = "name";
                 break;
-            case "dnd5e-image-modal":
+            case CharacterCreation.MODAL_URL:
                 CharacterCreation.handleAnyModalInput(event, new String[]{CharacterCreation.TEXT_INPUT_URL});
                 game = "dnd5e";
                 sel = "image";
                 break;
-            case "dnd5e-desc-modal":
+            case CharacterCreation.MODAL_DESCRIPTION:
                 CharacterCreation.handleAnyModalInput(event, new String[]{CharacterCreation.TEXT_INPUT_DESCRIPTION});
                 game = "dnd5e";
                 sel = "description";
                 break;
-            case "dnd5e-detail-modal":
+            case CharacterCreation.MODAL_DETAIL:
                 CharacterCreation.handleAnyModalInput(event, new String[]{
                     CharacterCreation.TEXT_INPUT_DETAIL_PERSONALITY,
                     CharacterCreation.TEXT_INPUT_DETAIL_IDEALS,
@@ -295,7 +350,7 @@ public class ComponentInteractionListener extends ListenerAdapter {
                 game = "dnd5e";
                 sel = "details";
                 break;
-            case "dnd5e-backstory-modal":
+            case CharacterCreation.MODAL_BACKSTORY:
                 CharacterCreation.handleAnyModalInput(event, new String[]{CharacterCreation.TEXT_INPUT_BACKSTORY});
                 game = "dnd5e";
                 sel = "backstory";
